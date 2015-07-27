@@ -6,7 +6,7 @@
 
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.LobbyServlet</servlet-class>
+        <servlet-class>com.tsystems.javaschool.ecare.servlets.LobbyController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -15,7 +15,7 @@
 
     <servlet>
         <servlet-name>ClientLobbyServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.ClientLobbyServlet</servlet-class>
+        <servlet-class>com.tsystems.javaschool.ecare.servlets.ClientLobbyController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ClientLobbyServlet</servlet-name>
@@ -24,7 +24,7 @@
 
     <servlet>
         <servlet-name>AdminLobbyServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.AdminLobbyServlet</servlet-class>
+        <servlet-class>com.tsystems.javaschool.ecare.servlets.AdminLobbyController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AdminLobbyServlet</servlet-name>

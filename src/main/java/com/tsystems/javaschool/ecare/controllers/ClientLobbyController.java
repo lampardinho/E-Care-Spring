@@ -24,7 +24,7 @@ import java.util.Set;
  * Created by Kolia on 06.07.2015.
  */
 @WebServlet(name = "ClientLobbyServlet")
-public class ClientLobbyServlet extends HttpServlet
+public class ClientLobbyController extends HttpServlet
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {

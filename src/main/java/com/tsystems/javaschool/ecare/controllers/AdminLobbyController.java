@@ -26,7 +26,7 @@ import java.util.*;
  * Created by Kolia on 11.07.2015.
  */
 @WebServlet(name = "AdminLobbyServlet")
-public class AdminLobbyServlet extends HttpServlet
+public class AdminLobbyController extends HttpServlet
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {

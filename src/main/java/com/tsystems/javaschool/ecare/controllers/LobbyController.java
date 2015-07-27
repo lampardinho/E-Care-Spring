@@ -15,8 +15,8 @@ import java.io.PrintWriter;
 /**
  * Created by Kolia on 01.07.2015.
  */
-@WebServlet(name = "LoginServlet")
-public class LobbyServlet extends HttpServlet
+@Controller
+public class LobbyController
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
