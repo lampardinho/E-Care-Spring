@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.servlets;
+package com.tsystems.javaschool.ecare.controllers;
 
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
@@ -8,6 +8,10 @@ import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.OptionService;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,32 +29,45 @@ import java.util.*;
 /**
  * Created by Kolia on 11.07.2015.
  */
-@WebServlet(name = "AdminLobbyServlet")
-public class AdminLobbyController extends HttpServlet
+@Controller
+public class AdminLobbyController
 {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    @Autowired
+    UserService userService;
+    
+    @Autowired
+    ContractService contractService;
+
+    @Autowired
+    TariffService tariffService;
+
+    @Autowired
+    OptionService optionService;
+    
+    @RequestMapping(value = "/admin_lobby", method = RequestMethod.POST)
+    protected String doPost(HttpServletRequest request)
     {
         try
         {
             HttpSession session = request.getSession();
 
-            List<User> users = UserService.getInstance().getAllClients();
+            List<User> users = userService.getAllClients();
             session.setAttribute("users", users);
 
-            List<Contract> contracts = ContractService.getInstance().getAllContracts();
+            List<Contract> contracts = contractService.getAllContracts();
             session.setAttribute("contracts", contracts);
 
-            List<Tariff> tariffs = TariffService.getInstance().getAllTariffs();
+            List<Tariff> tariffs = tariffService.getAllTariffs();
             session.setAttribute("tariffs", tariffs);
 
-            List<Option> options = OptionService.getInstance().getAllOptions();
+            List<Option> options = optionService.getAllOptions();
             session.setAttribute("options", options);
 
             List<User> lockedUsers = new LinkedList<>();
             for (User user : users)
             {
                 boolean isUserLocked = true;
-                List<Contract> userContracts = ContractService.getInstance().getUserContracts(user);
+                List<Contract> userContracts = contractService.getUserContracts(user);
                 for (Contract contract : userContracts)
                 {
                     if (contract.getLockedByUsers().isEmpty())
@@ -68,13 +85,12 @@ public class AdminLobbyController extends HttpServlet
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
+        return "/WEB-INF/jsp/admin_lobby.jsp";
     }
 
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    @RequestMapping(value = "/admin_lobby", method = RequestMethod.GET)
+    protected String doGet(HttpServletRequest request)
     {
-        PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
         System.out.println(action);
 
@@ -113,7 +129,7 @@ public class AdminLobbyController extends HttpServlet
 
                 try
                 {
-                    UserService.getInstance().saveOrUpdateClient(newUser);
+                    userService.saveOrUpdateClient(newUser);
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -122,16 +138,14 @@ public class AdminLobbyController extends HttpServlet
                 List<User> users = null;
                 try
                 {
-                    users = UserService.getInstance().getAllClients();
+                    users = userService.getAllClients();
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
                 session.setAttribute("users", users);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "add_contract":
             {
@@ -143,7 +157,7 @@ public class AdminLobbyController extends HttpServlet
                 List<User> users = null;
                 try
                 {
-                    users = UserService.getInstance().getAllClients();
+                    users = userService.getAllClients();
 
                     User user = null;
                     for (User u : users)
@@ -154,7 +168,7 @@ public class AdminLobbyController extends HttpServlet
                         }
                     }
 
-                    List<Tariff> tariffs = TariffService.getInstance().getAllTariffs();
+                    List<Tariff> tariffs = tariffService.getAllTariffs();
 
 
                     Tariff tariff = null;
@@ -168,19 +182,17 @@ public class AdminLobbyController extends HttpServlet
 
                     Contract contract = new Contract(user, tariff, Integer.parseInt(phoneNumber), Integer.parseInt(balance));
 
-                    ContractService.getInstance().saveOrUpdateContract(contract);
+                    contractService.saveOrUpdateContract(contract);
 
-                    List<Contract> contracts = ContractService.getInstance().getAllContracts();
+                    List<Contract> contracts = contractService.getAllContracts();
                     session.setAttribute("contracts", contracts);
 
-                    request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
+                    return "/WEB-INF/jsp/admin_lobby.jsp";
 
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
-
-                break;
             }
             case "find_user":
             {
@@ -196,9 +208,7 @@ public class AdminLobbyController extends HttpServlet
                     }
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "select_tariff":
             {
@@ -207,14 +217,12 @@ public class AdminLobbyController extends HttpServlet
                 List<Tariff> tariffs = null;
                 try
                 {
-                    tariffs = TariffService.getInstance().getAllTariffs();
+                    tariffs = tariffService.getAllTariffs();
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "get_avail_options":
             {
@@ -223,7 +231,7 @@ public class AdminLobbyController extends HttpServlet
                 List<Tariff> tariffs = null;
                 try
                 {
-                    tariffs = TariffService.getInstance().getAllTariffs();
+                    tariffs = tariffService.getAllTariffs();
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -235,9 +243,7 @@ public class AdminLobbyController extends HttpServlet
                         session.setAttribute("availableOptions", tariff.getAvailableOptions());
                     }
                 }
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "lock_user":
             {
@@ -251,10 +257,10 @@ public class AdminLobbyController extends HttpServlet
                     {
                         if (user.getEmail().equals(email))
                         {
-                            for (Contract contract : ContractService.getInstance().getUserContracts(user))
+                            for (Contract contract : contractService.getUserContracts(user))
                             {
                                 contract.getLockedByUsers().add(admin);
-                                ContractService.getInstance().saveOrUpdateContract(contract);
+                                contractService.saveOrUpdateContract(contract);
                             }
                             lockedUsers.add(user);
                         }
@@ -264,9 +270,7 @@ public class AdminLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "unlock_user":
             {
@@ -279,10 +283,10 @@ public class AdminLobbyController extends HttpServlet
                     {
                         if (user.getEmail().equals(email))
                         {
-                            for (Contract contract : ContractService.getInstance().getUserContracts(user))
+                            for (Contract contract : contractService.getUserContracts(user))
                             {
                                 contract.getLockedByUsers().clear();
-                                ContractService.getInstance().saveOrUpdateContract(contract);
+                                contractService.saveOrUpdateContract(contract);
                             }
                             lockedUsers.remove(user);
                         }
@@ -292,18 +296,14 @@ public class AdminLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "save_sel_options":
             {
                 String options = request.getParameter("options");
                 System.out.println(options);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "change_tariff":
             {
@@ -328,7 +328,7 @@ public class AdminLobbyController extends HttpServlet
                         {
                             contract.setTariff(newTariff);
                             contract.getSelectedOptions().clear();
-                            ContractService.getInstance().saveOrUpdateContract(contract);
+                            contractService.saveOrUpdateContract(contract);
                         }
                     }
                 } catch (Exception e)
@@ -336,9 +336,7 @@ public class AdminLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "add_tariff":
             {
@@ -361,19 +359,17 @@ public class AdminLobbyController extends HttpServlet
                 Tariff newTariff = new Tariff(tariffName, Integer.parseInt(tariffPrice), tariffOptions);
                 try
                 {
-                    TariffService.getInstance().saveOrUpdateTariff(newTariff);
+                    tariffService.saveOrUpdateTariff(newTariff);
                     tariffs.add(newTariff);
 
-                    tariffs = TariffService.getInstance().getAllTariffs();
+                    tariffs = tariffService.getAllTariffs();
                     session.setAttribute("tariffs", tariffs);
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "edit_tariff":
             {
@@ -400,7 +396,7 @@ public class AdminLobbyController extends HttpServlet
                         if (tariff.getName().equals(tariffName))
                         {
                             tariff.setAvailableOptions(tariffOptions);
-                            TariffService.getInstance().saveOrUpdateTariff(tariff);
+                            tariffService.saveOrUpdateTariff(tariff);
                         }
                     }
 
@@ -409,9 +405,7 @@ public class AdminLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "delete_tariff":
             {
@@ -429,18 +423,16 @@ public class AdminLobbyController extends HttpServlet
                             break;
                         }
                     }
-                    TariffService.getInstance().deleteTariff(removedTariff.getTariffId());
+                    tariffService.deleteTariff(removedTariff.getTariffId());
 
-                    tariffs = TariffService.getInstance().getAllTariffs();
+                    tariffs = tariffService.getAllTariffs();
                     session.setAttribute("tariffs", tariffs);
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "edit_option":
             {
@@ -466,7 +458,7 @@ public class AdminLobbyController extends HttpServlet
                         if (option.getName().equals(optionName))
                         {
                             option.setLockedOptions(lockedOptions);
-                            OptionService.getInstance().saveOrUpdateOption(option);
+                            optionService.saveOrUpdateOption(option);
                         }
                     }
 
@@ -475,9 +467,7 @@ public class AdminLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "sign_out":
             {
@@ -485,5 +475,6 @@ public class AdminLobbyController extends HttpServlet
                 break;
             }
         }
+        return "login.jsp";
     }
 }

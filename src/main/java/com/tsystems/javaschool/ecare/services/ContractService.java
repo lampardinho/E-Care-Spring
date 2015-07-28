@@ -5,8 +5,10 @@ import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.User;
 import com.tsystems.javaschool.ecare.util.AppException;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -15,45 +17,31 @@ import java.util.List;
  * This class is the implementation of IContractService for working with contract DAO
  * and contract entities. Class ContractService is a singleton.
  */
-
+@Service("contractService")
 public class ContractService
 {
+    /*SQL contract implementations of DAO class*/
+    private ContractDAO cnDao;
 
-    /*Instance of the singleton class*/
-    private static volatile ContractService instance;
-    /*Logger for contract service operations*/
-    private static Logger logger = Logger.getLogger(ContractService.getInstance().getClass());
-    /*SQL contract implementations of abstract DAO class*/
-    private IAbstractDAO<Contract> DAO = ContractDAO.getInstance();
-    private ContractDAO cnDAO = ContractDAO.getInstance();
     /*Client service instance for some methods of working with client amount in contract service*/
-    private UserService userService = UserService.getInstance();
+    private final UserService clientService;
 
-    /*Private constructor of singleton class*/
-    private ContractService()
-    {
-    }
+    /*Tariff service instance for some methods of working with tariff service*/
+    private final TariffService tariffService;
 
-    /**
-     * This method return instance of singleton class ContractService.
-     *
-     * @return instance of class.
-     */
-    public static ContractService getInstance()
-    {
-        ContractService localInstance = instance;
-        if (localInstance == null)
-        {
-            synchronized (ContractService.class)
-            {
-                localInstance = instance;
-                if (localInstance == null)
-                {
-                    instance = localInstance = new ContractService();
-                }
-            }
-        }
-        return localInstance;
+    /*Option service instance for some methods of working with option service*/
+    private final OptionService optionService;
+
+    /*Logger for contract service operations*/
+    private static Logger logger = Logger.getLogger(ContractService.class);
+
+    /*Constructor of Contract Service class*/
+    @Autowired
+    public ContractService(ContractDAO cnDAO, UserService clientService, OptionService optionService, TariffService tariffService) {
+        this.cnDao = cnDAO;
+        this.clientService = clientService;
+        this.optionService = optionService;
+        this.tariffService = tariffService;
     }
 
     /**
@@ -64,33 +52,23 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
      *                        and DAO returns null.
      */
+    @Transactional
     public Contract saveOrUpdateContract(Contract cn) throws AppException
     {
         logger.info("Save/update contract " + cn + " in DB.");
-        try
+
+        Contract contract = cnDao.saveOrUpdate(cn);
+        //If DAO returns null method will throws an ECareException
+        if (contract == null)
         {
-            EntityManagerUtil.beginTransaction();
-            Contract contract = DAO.saveOrUpdate(cn);
-            EntityManagerUtil.commit();
-            //If DAO returns null method will throws an ECareException
-            if (contract == null)
-            {
-                AppException ecx = new AppException("Failed to save/update contract " + cn + " in DB.");
-                logger.error(ecx.getMessage(), ecx);
-                throw ecx;
-            }
-            logger.info("Contract " + contract + " saved/updated in DB.");
-            //else contract will be saved and method returns contract entity
-            return contract;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Failed to save/update contract " + cn + " in DB.");
+            logger.error(ecx.getMessage(), ecx);
+            throw ecx;
         }
+        logger.info("Contract " + contract + " saved/updated in DB.");
+        //else contract will be saved and method returns contract entity
+        return contract;
+
     }
 
     /**
@@ -101,33 +79,21 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
      *                        and DAO returns null.
      */
+    @Transactional
     public Contract loadContract(int id) throws AppException
     {
         logger.info("Load contract with id: " + id + " from DB.");
-        try
+        Contract cn = cnDao.load(id);
+        //If DAO returns null method will throws an ECareException
+        if (cn == null)
         {
-            EntityManagerUtil.beginTransaction();
-            Contract cn = DAO.load(id);
-            EntityManagerUtil.commit();
-            //If DAO returns null method will throws an ECareException
-            if (cn == null)
-            {
-                AppException ecx = new AppException("Contract with id = " + id + " not found in DB.");
-                logger.warn(ecx.getMessage(), ecx);
-                throw ecx;
-            }
-            logger.info("Contract " + cn + " loaded from DB.");
-            //else method returns contract entity
-            return cn;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Contract with id = " + id + " not found in DB.");
+            logger.warn(ecx.getMessage(), ecx);
+            throw ecx;
         }
+        logger.info("Contract " + cn + " loaded from DB.");
+        //else method returns contract entity
+        return cn;
     }
 
     /**
@@ -139,37 +105,25 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if DAO returns NoResultException during finding of contract
      *                        in the database.
      */
+    @Transactional
     public Contract getContractByPhoneNumber(int number) throws AppException
     {
         logger.info("Find contract by telephone number: " + number + " in DB.");
         Contract cn = null;
-        try
+        try {
+            // Search of contract in the database by DAO method.
+            cn = cnDao.findContractByNumber(number);
+            // If contract does not exist in database, block try catches the NoResultException and
+            // throws an ECareException.
+        } catch (NoResultException nrx)
         {
-            EntityManagerUtil.beginTransaction();
-            try
-            {
-                // Search of contract in the database by DAO method.
-                cn = cnDAO.findContractByNumber(number);
-                // If contract does not exist in database, block try catches the NoResultException and
-                // throws an ECareException.
-            } catch (NoResultException nrx)
-            {
-                AppException ecx = new AppException("Contract with number: " + number + " not found.", nrx);
-                logger.warn(ecx.getMessage(), nrx);
-                throw ecx;
-            }
-            EntityManagerUtil.commit();
-            logger.info("Contract " + cn + " found and loaded from DB.");
-            return cn;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Contract with number: " + number + " not found.", nrx);
+            logger.warn(ecx.getMessage(), nrx);
+            throw ecx;
         }
+        logger.info("Contract " + cn + " found and loaded from DB.");
+        return cn;
+
     }
 
     /**
@@ -179,33 +133,23 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
      *                        of entity and DAO returns null.
      */
+    @Transactional
     public void deleteContract(int id) throws AppException
     {
         logger.info("Delete contract with id: " + id + " from DB.");
-        try
+        Contract cn = cnDao.load(id);
+        //If DAO returns null method will throws an ECareException.
+        if (cn == null)
         {
-            EntityManagerUtil.beginTransaction();
-            Contract cn = DAO.load(id);
-            //If DAO returns null method will throws an ECareException.
-            if (cn == null)
-            {
-                AppException ecx = new AppException("Contract with id = " + id + " not exist.");
-                logger.warn(ecx.getMessage(), ecx);
-                throw ecx;
-            }
-            // Else contract will be deleted from the database.
-            DAO.delete(cn);
-            EntityManagerUtil.commit();
-            logger.info("Contract " + cn + " deleted from DB.");
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Contract with id = " + id + " not exist.");
+            logger.warn(ecx.getMessage(), ecx);
+            throw ecx;
         }
+        // Else contract will be deleted from the database.
+        cnDao.delete(cn);
+
+        logger.info("Contract " + cn + " deleted from DB.");
+
     }
 
     /**
@@ -215,33 +159,22 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
      *                        and DAO returns null.
      */
+    @Transactional
     public List<Contract> getAllContracts() throws AppException
     {
         logger.info("Get all contracts from DB.");
-        try
+        List<Contract> contracts = cnDao.getAll();
+        //If DAO returns null method will throws an ECareException
+        if (contracts == null)
         {
-            EntityManagerUtil.beginTransaction();
-            List<Contract> contracts = DAO.getAll();
-            EntityManagerUtil.commit();
-            //If DAO returns null method will throws an ECareException
-            if (contracts == null)
-            {
-                AppException ecx = new AppException("Failed to get all contracts from DB.");
-                logger.error(ecx.getMessage(), ecx);
-                throw ecx;
-            }
-            logger.info("All contracts obtained from DB.");
-            // Else method returns list of contract entities.
-            return contracts;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Failed to get all contracts from DB.");
+            logger.error(ecx.getMessage(), ecx);
+            throw ecx;
         }
+        logger.info("All contracts obtained from DB.");
+        // Else method returns list of contract entities.
+        return contracts;
+
     }
 
     /**
@@ -252,56 +185,33 @@ public class ContractService
      * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
      *                        and DAO returns null.
      */
+    @Transactional
     public List<Contract> getUserContracts(User user) throws AppException
     {
         logger.info("Get all contracts from DB for client with id: " + user.getUserId() + ".");
-        try
+        List<Contract> contracts = cnDao.getAllContractsForClient(user.getUserId());
+        //If DAO returns null method will throws an ECareException
+        if (contracts == null)
         {
-            EntityManagerUtil.beginTransaction();
-            List<Contract> contracts = cnDAO.getAllContractsForClient(user.getUserId());
-            EntityManagerUtil.commit();
-            //If DAO returns null method will throws an ECareException
-            if (contracts == null)
-            {
-                AppException ecx = new AppException("Failed to get all contracts from DB.");
-                logger.error(ecx.getMessage(), ecx);
-                throw ecx;
-            }
-            logger.info("All contracts for client id: " + user.getUserId() + " obtained from DB.");
-            // Else method returns list of contract entities
-            return contracts;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
+            AppException ecx = new AppException("Failed to get all contracts from DB.");
+            logger.error(ecx.getMessage(), ecx);
+            throw ecx;
         }
+        logger.info("All contracts for client id: " + user.getUserId() + " obtained from DB.");
+        // Else method returns list of contract entities
+        return contracts;
     }
 
     /**
      * This method implements deleting of all contracts from the database.
      */
+    @Transactional
     public void deleteAllContracts()
     {
         logger.info("Delete all contracts from DB.");
-        try
-        {
-            EntityManagerUtil.beginTransaction();
-            DAO.deleteAll();
-            EntityManagerUtil.commit();
-            logger.info("All contracts deleted from DB.");
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
-        }
+        cnDao.deleteAll();
+        logger.info("All contracts deleted from DB.");
+
     }
 
     /**
@@ -309,24 +219,13 @@ public class ContractService
      *
      * @param id client id for deleting of all contracts for this client
      */
+    @Transactional
     public void deleteAllContractsForClient(long id)
     {
         logger.info("Delete all contracts from DB for client with id: " + id + ".");
-        try
-        {
-            EntityManagerUtil.beginTransaction();
-            cnDAO.deleteAllContractsForClient(id);
-            EntityManagerUtil.commit();
-            logger.info("All contracts for client id: " + id + " deleted from DB.");
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
-        }
+        cnDao.deleteAllContractsForClient(id);
+        logger.info("All contracts for client id: " + id + " deleted from DB.");
+
     }
 
     /**
@@ -334,25 +233,14 @@ public class ContractService
      *
      * @return number of contracts in the database.
      */
+    @Transactional
     public long getNumberOfContracts()
     {
         logger.info("Get number of contracts in DB.");
-        try
-        {
-            EntityManagerUtil.beginTransaction();
-            long number = DAO.getCount();
-            EntityManagerUtil.commit();
-            logger.info(number + "of contracts obtained from DB.");
-            return number;
-        } catch (RuntimeException re)
-        {
-            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
-                EntityManagerUtil.rollback();
-            throw re;
-        } finally
-        {
-            EntityManagerUtil.closeEntityManager();
-        }
+        long number = cnDao.getCount();
+        logger.info(number + "of contracts obtained from DB.");
+        return number;
+
     }
 
 

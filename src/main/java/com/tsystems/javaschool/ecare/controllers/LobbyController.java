@@ -1,7 +1,11 @@
-package com.tsystems.javaschool.ecare.servlets;
+package com.tsystems.javaschool.ecare.controllers;
 
 import com.tsystems.javaschool.ecare.entities.User;
 import com.tsystems.javaschool.ecare.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,41 +22,38 @@ import java.io.PrintWriter;
 @Controller
 public class LobbyController
 {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
-        PrintWriter out = response.getWriter();
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        //String isAdmin = request.getParameter("isAdmin");
-        //out.println(isAdmin);
+    @Autowired
+    UserService userService;
 
-        UserService userService = UserService.getInstance();
+    @RequestMapping(value = "/lobby", method = RequestMethod.POST)
+    protected String login(HttpServletRequest req)
+    {
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String isAdmin = req.getParameter("isAdmin");
+
         try
         {
-            HttpSession session = request.getSession();
+            HttpSession session = req.getSession();
 
             User user = userService.findClient(email, password);
             session.setAttribute("user", user);
 
 
-            if (user.getIsAdmin())
+            if (user.getIsAdmin() || isAdmin != null)
             {
-                request.getRequestDispatcher("admin_lobby").include(request, response);
+                return "admin_lobby";
             } else
             {
-                request.getRequestDispatcher("client_lobby").include(request, response);
+                return "client_lobby";
             }
         } catch (Exception e)
         {
             e.printStackTrace();
-            response.sendRedirect("login.jsp");
+            return "login.jsp";
         }
 
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
 
-
-    }
 }

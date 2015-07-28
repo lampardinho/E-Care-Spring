@@ -2,52 +2,35 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
-
+@Repository("userDao")
 public class UserDAO implements IAbstractDAO<User>
 {
-    private static volatile UserDAO instance;
 
-    private UserDAO()
-    {
-    }
-
-    public static UserDAO getInstance()
-    {
-        UserDAO localInstance = instance;
-        if (localInstance == null)
-        {
-            synchronized (UserDAO.class)
-            {
-                localInstance = instance;
-                if (localInstance == null)
-                {
-                    instance = localInstance = new UserDAO();
-                }
-            }
-        }
-        return localInstance;
-    }
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public User saveOrUpdate(User cl)
     {
-        return EntityManagerUtil.getEntityManager().merge(cl);
+        return em.merge(cl);
     }
 
     @Override
     public User load(int id)
     {
-        return EntityManagerUtil.getEntityManager().find(User.class, id);
+        return em.find(User.class, id);
     }
 
     public User findUserByLoginAndPassword(String login, String password)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByLoginAndPassword", User.class);
+        Query query = em.createNamedQuery("User.findUserByLoginAndPassword", User.class);
         query.setParameter("login", login);
         query.setParameter("password", password);
         return (User) query.getSingleResult();
@@ -55,7 +38,7 @@ public class UserDAO implements IAbstractDAO<User>
 
     public User findUserByNumber(int number)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByPhoneNumber", User.class);
+        Query query = em.createNamedQuery("User.findUserByPhoneNumber", User.class);
         query.setParameter("number", number);
         return (User) query.getSingleResult();
     }
@@ -63,30 +46,30 @@ public class UserDAO implements IAbstractDAO<User>
     @Override
     public void delete(User cl)
     {
-        EntityManagerUtil.getEntityManager().remove(cl);
+        em.remove(cl);
     }
 
     @Override
     public List<User> getAll()
     {
-        return EntityManagerUtil.getEntityManager().createNamedQuery("User.getAllUsers", User.class).getResultList();
+        return em.createNamedQuery("User.getAllUsers", User.class).getResultList();
     }
 
     @Override
     public void deleteAll()
     {
-        EntityManagerUtil.getEntityManager().createNamedQuery("Client.deleteAllClients").executeUpdate();
+        em.createNamedQuery("Client.deleteAllClients").executeUpdate();
     }
 
     @Override
     public long getCount()
     {
-        return ((Number) EntityManagerUtil.getEntityManager().createNamedQuery("Client.size").getSingleResult()).longValue();
+        return ((Number) em.createNamedQuery("Client.size").getSingleResult()).longValue();
     }
 
     public User findUserByLogin(String login)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Client.findClientByLogin", User.class);
+        Query query = em.createNamedQuery("Client.findClientByLogin", User.class);
         query.setParameter("login", login);
         return (User) query.getSingleResult();
     }

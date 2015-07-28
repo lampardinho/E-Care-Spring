@@ -2,52 +2,35 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
-
+@Repository("contractDao")
 public class ContractDAO implements IAbstractDAO<Contract>
 {
-    private static volatile ContractDAO instance;
 
-    private ContractDAO()
-    {
-    }
-
-    public static ContractDAO getInstance()
-    {
-        ContractDAO localInstance = instance;
-        if (localInstance == null)
-        {
-            synchronized (ContractDAO.class)
-            {
-                localInstance = instance;
-                if (localInstance == null)
-                {
-                    instance = localInstance = new ContractDAO();
-                }
-            }
-        }
-        return localInstance;
-    }
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public Contract saveOrUpdate(Contract cn)
     {
-        return EntityManagerUtil.getEntityManager().merge(cn);
+        return em.merge(cn);
     }
 
     @Override
     public Contract load(int id)
     {
-        return EntityManagerUtil.getEntityManager().find(Contract.class, id);
+        return em.find(Contract.class, id);
     }
 
     public Contract findContractByNumber(int number)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.findContractByNumber", Contract.class);
+        Query query = em.createNamedQuery("Contract.findContractByNumber", Contract.class);
         query.setParameter("number", number);
         return (Contract) query.getSingleResult();
     }
@@ -55,18 +38,18 @@ public class ContractDAO implements IAbstractDAO<Contract>
     @Override
     public void delete(Contract cn)
     {
-        EntityManagerUtil.getEntityManager().remove(cn);
+        em.remove(cn);
     }
 
     @Override
     public List<Contract> getAll()
     {
-        return EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
+        return em.createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
     }
 
     public List<Contract> getAllContractsForClient(int id)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContractsForClient", Contract.class);
+        Query query = em.createNamedQuery("Contract.getAllContractsForClient", Contract.class);
         query.setParameter("id", id);
         return query.getResultList();
     }
@@ -74,12 +57,12 @@ public class ContractDAO implements IAbstractDAO<Contract>
     @Override
     public void deleteAll()
     {
-        EntityManagerUtil.getEntityManager().createNamedQuery("Contract.deleteAllContracts").executeUpdate();
+        em.createNamedQuery("Contract.deleteAllContracts").executeUpdate();
     }
 
     public void deleteAllContractsForClient(long id)
     {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.deleteAllContractsForClient");
+        Query query = em.createNamedQuery("Contract.deleteAllContractsForClient");
         query.setParameter(1, id);
         query.executeUpdate();
     }
@@ -87,6 +70,6 @@ public class ContractDAO implements IAbstractDAO<Contract>
     @Override
     public long getCount()
     {
-        return ((Number) EntityManagerUtil.getEntityManager().createNamedQuery("Contract.size").getSingleResult()).longValue();
+        return ((Number) em.createNamedQuery("Contract.size").getSingleResult()).longValue();
     }
 }

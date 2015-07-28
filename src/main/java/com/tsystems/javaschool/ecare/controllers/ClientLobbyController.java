@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.servlets;
+package com.tsystems.javaschool.ecare.controllers;
 
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
@@ -6,6 +6,11 @@ import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
 import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.TariffService;
+import com.tsystems.javaschool.ecare.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,10 +28,17 @@ import java.util.Set;
 /**
  * Created by Kolia on 06.07.2015.
  */
-@WebServlet(name = "ClientLobbyServlet")
-public class ClientLobbyController extends HttpServlet
+@Controller
+public class ClientLobbyController
 {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    @Autowired
+    ContractService contractService;
+
+    @Autowired
+    TariffService tariffService;
+
+    @RequestMapping(value = "/client_lobby", method = RequestMethod.POST)
+    protected String doPost(HttpServletRequest request)
     {
         HttpSession session = request.getSession();
 
@@ -34,10 +46,10 @@ public class ClientLobbyController extends HttpServlet
 
         try
         {
-            List<Contract> contracts = ContractService.getInstance().getUserContracts(user);
+            List<Contract> contracts = contractService.getUserContracts(user);
             session.setAttribute("contracts", contracts);
 
-            List<Tariff> tariffs = TariffService.getInstance().getAllTariffs();
+            List<Tariff> tariffs = tariffService.getAllTariffs();
             session.setAttribute("tariffs", tariffs);
 
             Contract currentContract = contracts.get(0);
@@ -81,12 +93,12 @@ public class ClientLobbyController extends HttpServlet
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
+        return "/WEB-INF/jsp/client_lobby.jsp";
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    @RequestMapping(value = "/client_lobby", method = RequestMethod.GET)
+    protected String doGet(HttpServletRequest request)
     {
-        PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
         System.out.println(action);
 
@@ -135,7 +147,7 @@ public class ClientLobbyController extends HttpServlet
 
                     session.setAttribute("balance", selectedContract.getBalance());
 
-                    request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
+                    return "/WEB-INF/jsp/client_lobby.jsp";
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -173,8 +185,7 @@ public class ClientLobbyController extends HttpServlet
 
                 session.setAttribute("balance", contract.getBalance());
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "disable_option":
             {
@@ -207,8 +218,7 @@ public class ClientLobbyController extends HttpServlet
 
                 session.setAttribute("currentContract", contract);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "add_option":
             {
@@ -238,8 +248,7 @@ public class ClientLobbyController extends HttpServlet
 
                 session.setAttribute("currentContract", contract);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "block":
             {
@@ -254,9 +263,7 @@ public class ClientLobbyController extends HttpServlet
                 actionsHistory.add("Block contact " + contract.getPhoneNumber());
                 session.setAttribute("currentContract", contract);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "unblock":
             {
@@ -272,9 +279,7 @@ public class ClientLobbyController extends HttpServlet
                 session.setAttribute("isBlocked", !contract.getLockedByUsers().isEmpty());
                 session.setAttribute("currentContract", contract);
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "apply_changes":
             {
@@ -284,23 +289,21 @@ public class ClientLobbyController extends HttpServlet
                 {
                     for (Contract contract : contracts)
                     {
-                        ContractService.getInstance().saveOrUpdateContract(contract);
+                        contractService.saveOrUpdateContract(contract);
                     }
                     actionsHistory.clear();
                 } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "discard_changes":
             {
                 try
                 {
                     User user = (User) session.getAttribute("user");
-                    List<Contract> contracts = ContractService.getInstance().getUserContracts(user);
+                    List<Contract> contracts = contractService.getUserContracts(user);
                     session.setAttribute("contracts", contracts);
 
                     Contract currentContract = null;
@@ -344,15 +347,18 @@ public class ClientLobbyController extends HttpServlet
                     e.printStackTrace();
                 }
 
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-
-                break;
+                return "/WEB-INF/jsp/client_lobby.jsp";
             }
             case "sign_out":
             {
                 session.invalidate();
                 break;
             }
+            default:
+            {
+                return "login.jsp";
+            }
         }
+        return "login.jsp";
     }
 }
