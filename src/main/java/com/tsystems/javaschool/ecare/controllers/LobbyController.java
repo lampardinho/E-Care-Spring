@@ -1,20 +1,14 @@
 package com.tsystems.javaschool.ecare.controllers;
 
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.services.UserService;
+import com.tsystems.javaschool.ecare.junit.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -40,7 +34,7 @@ public class LobbyController
             session.setAttribute("user", user);
 
 
-            if (user.getIsAdmin() || isAdmin != null)
+            if (user.getIsAdmin())
             {
                 return "admin_lobby";
             } else

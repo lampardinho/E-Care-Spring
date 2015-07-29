@@ -1,6 +1,5 @@
-package com.tsystems.javaschool.ecare.services;
+package com.tsystems.javaschool.ecare.junit;
 
-import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
 import com.tsystems.javaschool.ecare.util.AppException;

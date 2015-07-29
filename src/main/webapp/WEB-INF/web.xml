@@ -4,32 +4,44 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:spring/spring-datasource.xml
+            classpath:spring/spring-security.xml
+        </param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!--
+    - Servlet that dispatches request to registered handlers (Controller implementations).
+    -->
     <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.LobbyController</servlet-class>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/mvc-core-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/lobby</url-pattern>
+        <servlet-name>action</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>ClientLobbyServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.ClientLobbyController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ClientLobbyServlet</servlet-name>
-        <url-pattern>/client_lobby/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AdminLobbyServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.servlets.AdminLobbyController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdminLobbyServlet</servlet-name>
-        <url-pattern>/admin_lobby/*</url-pattern>
-    </servlet-mapping>
+    <!-- Spring Security filter -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 
     <filter>

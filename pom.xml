@@ -235,6 +235,11 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <finalName>fullstack</finalName>
         <plugins>
             <plugin>

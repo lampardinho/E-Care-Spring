@@ -3,6 +3,7 @@
   Date: 29.06.2015
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -41,6 +42,7 @@
 				<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 				<label for="inputPassword" class="sr-only">Password</label>
 				<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" value="isAdmin" name="isAdmin"> Admin
