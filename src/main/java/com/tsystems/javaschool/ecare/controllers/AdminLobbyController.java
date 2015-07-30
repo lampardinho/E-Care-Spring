@@ -38,49 +38,6 @@ public class AdminLobbyController
     @Autowired
     OptionService optionService;
     
-    @RequestMapping(value = "/admin_lobby", method = RequestMethod.POST)
-    protected String doPost(HttpServletRequest request)
-    {
-        try
-        {
-            HttpSession session = request.getSession();
-
-            List<User> users = userService.getAllClients();
-            session.setAttribute("users", users);
-
-            List<Contract> contracts = contractService.getAllContracts();
-            session.setAttribute("contracts", contracts);
-
-            List<Tariff> tariffs = tariffService.getAllTariffs();
-            session.setAttribute("tariffs", tariffs);
-
-            List<Option> options = optionService.getAllOptions();
-            session.setAttribute("options", options);
-
-            List<User> lockedUsers = new LinkedList<>();
-            for (User user : users)
-            {
-                boolean isUserLocked = true;
-                List<Contract> userContracts = contractService.getUserContracts(user);
-                for (Contract contract : userContracts)
-                {
-                    if (contract.getLockedByUsers().isEmpty())
-                    {
-                        isUserLocked = false;
-                        break;
-                    }
-                }
-                if (isUserLocked && !userContracts.isEmpty())
-                    lockedUsers.add(user);
-            }
-            session.setAttribute("lockedUsers", lockedUsers);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return "/WEB-INF/jsp/admin_lobby.jsp";
-    }
 
     @RequestMapping(value = "/admin_lobby", method = RequestMethod.GET)
     protected String doGet(HttpServletRequest request)
