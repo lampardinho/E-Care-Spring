@@ -1,6 +1,10 @@
 package com.tsystems.javaschool.ecare.entities;
 
+
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,32 +28,40 @@ public class Contract implements Serializable
     @Id
     @Column(name = "contract_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private int contractId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @NotNull
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id")
+    @NotNull
     private Tariff tariff;
 
     @Column(name = "phone_number")
+    @NotNull
+    @Size(min=2, max=10)
     private int phoneNumber;
 
     @Column(name = "ballance")
+    @NotNull
     private int balance;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "contract_locking",
             joinColumns = @JoinColumn(name = "contract_id"),
             inverseJoinColumns = @JoinColumn(name = "locker_id"))
+    @NotNull
     private Set<User> lockedByUsers;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "selected_options",
             joinColumns = @JoinColumn(name = "contract_id"),
             inverseJoinColumns = @JoinColumn(name = "option_id"))
+    @NotNull
     private Set<Option> selectedOptions;
 
     public Contract()

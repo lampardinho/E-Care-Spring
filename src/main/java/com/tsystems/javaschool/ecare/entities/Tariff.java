@@ -1,6 +1,7 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -20,9 +21,11 @@ public class Tariff implements Serializable
     @Id
     @Column(name = "tariff_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private int tariffId;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "price")
@@ -32,6 +35,7 @@ public class Tariff implements Serializable
     @JoinTable(name = "available_options",
             joinColumns = @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id"),
             inverseJoinColumns = @JoinColumn(name = "option_id", referencedColumnName = "option_id"))
+    @NotNull
     private Set<Option> availableOptions;
 
     public Tariff()

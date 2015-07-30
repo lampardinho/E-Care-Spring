@@ -1,6 +1,7 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -23,21 +24,26 @@ public class Option implements Serializable
     @Id
     @Column(name = "option_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private int optionId;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "connection_price")
+    @NotNull
     private int connectionPrice;
 
     @Column(name = "monthly_price")
+    @NotNull
     private int monthlyPrice;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "option_locking",
             joinColumns = @JoinColumn(name = "selected_option_id"),
             inverseJoinColumns = @JoinColumn(name = "locked_option_id"))
+    @NotNull
     private Set<Option> lockedOptions;
 
 

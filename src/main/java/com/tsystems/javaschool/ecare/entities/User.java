@@ -1,6 +1,7 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -24,36 +25,46 @@ public class User implements Serializable
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private int userId;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "surname")
+    @NotNull
     private String surname;
 
     @Column(name = "birth_date")
+    @NotNull
     private Date birthDate;
 
     @Column(name = "passport_data")
+    @NotNull
     private String passportData;
 
     @Column(name = "address")
+    @NotNull
     private String address;
 
     @Column(name = "email")
+    @NotNull
     private String email;
 
     @Column(name = "password")
+    @NotNull
     private String password;
 
     @Column(name = "is_admin")
+    @NotNull
     private byte isAdmin;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "contract_locking",
             joinColumns = @JoinColumn(name = "locker_id"),
             inverseJoinColumns = @JoinColumn(name = "contract_id"))
+    @NotNull
     private Set<Contract> lockedContracts;
 
     public User()
