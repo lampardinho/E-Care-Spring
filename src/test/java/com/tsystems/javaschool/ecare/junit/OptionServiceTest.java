@@ -2,23 +2,14 @@ package com.tsystems.javaschool.ecare.junit;
 
 import com.tsystems.javaschool.ecare.entities.Option;
 import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.util.AppException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
-
-
-import java.util.List;
 
 
 public class OptionServiceTest
 {
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"spring/spring-datasource-test.xml"});
+    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"WEB-INF/spring-datasource-test.xml"});
     private static TariffService tariffService = (TariffService) context.getBean("tariffService");
     private static OptionService optionService = (OptionService) context.getBean("optionService");
 

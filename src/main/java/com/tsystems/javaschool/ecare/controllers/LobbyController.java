@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,7 +40,7 @@ public class LobbyController
     OptionService optionService;
 
     @RequestMapping(value = "/lobby", method = RequestMethod.POST)
-    protected String login(HttpServletRequest req)
+    protected ModelAndView login(HttpServletRequest req)
     {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
@@ -56,16 +57,16 @@ public class LobbyController
             if (user.getIsAdmin() || isAdmin != null)
             {
                 initAdmin(req);
-                return "admin_lobby";
+                return new ModelAndView("admin_lobby");
             } else
             {
                 initClient(req);
-                return "client_lobby";
+                return new ModelAndView("client_lobby");
             }
         } catch (Exception e)
         {
             e.printStackTrace();
-            return "login";
+            return new ModelAndView("/login.jsp");
         }
 
     }

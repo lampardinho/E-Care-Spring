@@ -118,7 +118,7 @@ $('.lockButton').click(function() {
         $('#userProfile').modal('hide');
         email = $('#foundUserEmail').text();
     }
-    $.get('admin_lobby',{action:"lock_user",email:email},function(responseText) {
+    $.get('lock_user',{email:email},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -288,6 +288,6 @@ $('#editOptionButton').click(function() {
 
 $('#logout').click(function() {
     $.get('admin_lobby',{action:"sign_out"},function(responseText) {
-        window.location = "login.jsp";
+        window.location = "../login.jsp";
     });
 });

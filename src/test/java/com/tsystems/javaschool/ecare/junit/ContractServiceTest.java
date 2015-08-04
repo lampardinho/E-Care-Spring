@@ -4,14 +4,9 @@ import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
 import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.AppException;
-import org.junit.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ContractServiceTest
 {
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"spring/spring-datasource-test.xml"});
+    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"WEB-INF/spring-datasource-test.xml"});
     private static UserService clientService = (UserService) context.getBean("clientService");
     private static ContractService contractService = (ContractService) context.getBean("contractService");
     private static TariffService tariffService = (TariffService) context.getBean("tariffService");

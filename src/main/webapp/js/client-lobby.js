@@ -133,6 +133,6 @@ $('#discard').click(function() {
 
 $('#logout').click(function() {
     $.get('client_lobby',{action:"sign_out"},function(responseText) {
-        window.location = "login.jsp";
+        window.location = "../login.jsp";
     });
 });

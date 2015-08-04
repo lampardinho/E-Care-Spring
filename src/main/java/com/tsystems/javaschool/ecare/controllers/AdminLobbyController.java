@@ -37,7 +37,39 @@ public class AdminLobbyController
 
     @Autowired
     OptionService optionService;
-    
+
+
+    @RequestMapping(value = "/lock_user", method = RequestMethod.GET)
+    protected String lockUser(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        String email = request.getParameter("email");
+        try
+        {
+            List<User> users = (List<User>) session.getAttribute("users");
+            List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
+            User admin = (User) session.getAttribute("user");
+            for (User user : users)
+            {
+                if (user.getEmail().equals(email))
+                {
+                    for (Contract contract : contractService.getUserContracts(user))
+                    {
+                        contract.getLockedByUsers().add(admin);
+                        contractService.saveOrUpdateContract(contract);
+                    }
+                    lockedUsers.add(user);
+                }
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return "/WEB-INF/jsp/admin_lobby.jsp";
+    }
+
+
 
     @RequestMapping(value = "/admin_lobby", method = RequestMethod.GET)
     protected String doGet(HttpServletRequest request)
@@ -194,33 +226,6 @@ public class AdminLobbyController
                         session.setAttribute("availableOptions", tariff.getAvailableOptions());
                     }
                 }
-                return "/WEB-INF/jsp/admin_lobby.jsp";
-            }
-            case "lock_user":
-            {
-                String email = request.getParameter("email");
-                try
-                {
-                    List<User> users = (List<User>) session.getAttribute("users");
-                    List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
-                    User admin = (User) session.getAttribute("user");
-                    for (User user : users)
-                    {
-                        if (user.getEmail().equals(email))
-                        {
-                            for (Contract contract : contractService.getUserContracts(user))
-                            {
-                                contract.getLockedByUsers().add(admin);
-                                contractService.saveOrUpdateContract(contract);
-                            }
-                            lockedUsers.add(user);
-                        }
-                    }
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
                 return "/WEB-INF/jsp/admin_lobby.jsp";
             }
             case "unlock_user":

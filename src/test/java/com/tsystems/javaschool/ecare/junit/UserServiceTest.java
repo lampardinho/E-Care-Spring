@@ -1,15 +1,9 @@
 package com.tsystems.javaschool.ecare.junit;
 
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.AppException;
-import org.junit.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class UserServiceTest
 {
 
-    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"spring/spring-datasource-test.xml"});
+    private static ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"WEB-INF/spring-datasource-test.xml"});
     private static UserService clientService = (UserService) context.getBean("clientService");
 
     private static User CL1, CL2, CL3;
