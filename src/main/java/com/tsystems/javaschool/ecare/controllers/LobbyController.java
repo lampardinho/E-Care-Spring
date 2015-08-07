@@ -4,10 +4,10 @@ import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
 import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.junit.ContractService;
-import com.tsystems.javaschool.ecare.junit.OptionService;
-import com.tsystems.javaschool.ecare.junit.TariffService;
-import com.tsystems.javaschool.ecare.junit.UserService;
+import com.tsystems.javaschool.ecare.services.ContractService;
+import com.tsystems.javaschool.ecare.services.OptionService;
+import com.tsystems.javaschool.ecare.services.TariffService;
+import com.tsystems.javaschool.ecare.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +25,7 @@ import java.util.Set;
  * Created by Kolia on 01.07.2015.
  */
 @Controller
+@RequestMapping(value = "/lobby", method = RequestMethod.POST)
 public class LobbyController
 {
     @Autowired
@@ -39,7 +40,7 @@ public class LobbyController
     @Autowired
     OptionService optionService;
 
-    @RequestMapping(value = "/lobby", method = RequestMethod.POST)
+    //@RequestMapping(value = "/lobby", method = RequestMethod.POST)
     protected ModelAndView login(HttpServletRequest req)
     {
         String email = req.getParameter("email");

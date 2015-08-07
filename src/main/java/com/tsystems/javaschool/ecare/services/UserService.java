@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.junit;
+package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.UserDAO;
 import com.tsystems.javaschool.ecare.entities.User;

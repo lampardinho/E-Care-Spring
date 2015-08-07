@@ -1,6 +1,7 @@
-package com.tsystems.javaschool.ecare.junit;
+package com.tsystems.javaschool.ecare.junit.services;
 
 import com.tsystems.javaschool.ecare.entities.User;
+import com.tsystems.javaschool.ecare.services.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

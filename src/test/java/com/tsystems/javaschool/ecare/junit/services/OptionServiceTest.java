@@ -1,7 +1,9 @@
-package com.tsystems.javaschool.ecare.junit;
+package com.tsystems.javaschool.ecare.junit.services;
 
 import com.tsystems.javaschool.ecare.entities.Option;
 import com.tsystems.javaschool.ecare.entities.Tariff;
+import com.tsystems.javaschool.ecare.services.OptionService;
+import com.tsystems.javaschool.ecare.services.TariffService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
