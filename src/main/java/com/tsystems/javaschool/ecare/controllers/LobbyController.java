@@ -8,14 +8,21 @@ import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.OptionService;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
+import org.hibernate.metamodel.source.annotations.xml.mocker.MockHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +32,6 @@ import java.util.Set;
  * Created by Kolia on 01.07.2015.
  */
 @Controller
-@RequestMapping(value = "/lobby", method = RequestMethod.POST)
 public class LobbyController
 {
     @Autowired
@@ -40,55 +46,48 @@ public class LobbyController
     @Autowired
     OptionService optionService;
 
-    //@RequestMapping(value = "/lobby", method = RequestMethod.POST)
-    protected ModelAndView login(HttpServletRequest req)
+    @RequestMapping(value = "/lobby", method = RequestMethod.GET)
+    protected String login(ModelMap model, Authentication authentication)
     {
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String isAdmin = req.getParameter("isAdmin");
-        try
+        //String name = principal.getName();
+
+        User user = userService.findClient("1lampard@mail.ru", "qwerty");
+        model.addAttribute("user", user);
+
+        String role = null;
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            role = authority.getAuthority();
+        }
+
+        if (role.equals("ROLE_ADMIN"))
         {
-            HttpSession session = req.getSession();
-
-            User user = userService.findClient(email, password);
-
-            session.setAttribute("user", user);
-
-
-            if (user.getIsAdmin() || isAdmin != null)
-            {
-                initAdmin(req);
-                return new ModelAndView("admin_lobby");
-            } else
-            {
-                initClient(req);
-                return new ModelAndView("client_lobby");
-            }
-        } catch (Exception e)
+            initAdmin(model);
+            //return new ModelAndView("admin_lobby", model);
+            return "admin_lobby";
+        }
+        else
         {
-            e.printStackTrace();
-            return new ModelAndView("/login.jsp");
+            initClient(model);
+            return "client_lobby";
         }
 
     }
 
-    private void initAdmin(HttpServletRequest request)
+    private void initAdmin(ModelMap model)
     {
         try
         {
-            HttpSession session = request.getSession();
-
             List<User> users = userService.getAllClients();
-            session.setAttribute("users", users);
+            model.addAttribute("users", users);
 
             List<Contract> contracts = contractService.getAllContracts();
-            session.setAttribute("contracts", contracts);
+            model.addAttribute("contracts", contracts);
 
             List<Tariff> tariffs = tariffService.getAllTariffs();
-            session.setAttribute("tariffs", tariffs);
+            model.addAttribute("tariffs", tariffs);
 
             List<Option> options = optionService.getAllOptions();
-            session.setAttribute("options", options);
+            model.addAttribute("options", options);
 
             List<User> lockedUsers = new LinkedList<>();
             for (User user : users)
@@ -106,46 +105,34 @@ public class LobbyController
                 if (isUserLocked && !userContracts.isEmpty())
                     lockedUsers.add(user);
             }
-            session.setAttribute("lockedUsers", lockedUsers);
+            model.addAttribute("lockedUsers", lockedUsers);
         } catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        //return "/WEB-INF/jsp/admin_lobby.jsp";
     }
 
 
-    private void initClient(HttpServletRequest request)
+    private void initClient(ModelMap model)
     {
-        HttpSession session = request.getSession();
-
-        User user = (User) session.getAttribute("user");
+        User user = (User) model.get("user");
 
         try
         {
             List<Contract> contracts = contractService.getUserContracts(user);
-            session.setAttribute("contracts", contracts);
+            model.addAttribute("contracts", contracts);
 
             List<Tariff> tariffs = tariffService.getAllTariffs();
-            session.setAttribute("tariffs", tariffs);
+            model.addAttribute("tariffs", tariffs);
 
             Contract currentContract = contracts.get(0);
-            session.setAttribute("currentContract", currentContract);
+            model.addAttribute("currentContract", currentContract);
 
             Tariff currentTariff = currentContract.getTariff();
-            session.setAttribute("currentTariff", currentTariff);
+            model.addAttribute("currentTariff", currentTariff);
 
 
-            session.setAttribute("options", currentTariff.getAvailableOptions());
-
-            /*for (Tariff tariff : tariffs)
-            {
-                if (tariff.getName().equals(currentTariff.getName()))
-                {
-                    session.setAttribute("options", currentTariff.getAvailableOptions());
-                }
-            }*/
+            model.addAttribute("options", currentTariff.getAvailableOptions());
 
 
             List<Option> disabledOptions = new LinkedList<>();
@@ -159,18 +146,16 @@ public class LobbyController
                     disabledOptions.add(lockedOption);
                 }
             }
-            session.setAttribute("disabledOptions", disabledOptions);
+            model.addAttribute("disabledOptions", disabledOptions);
 
 
             List<String> actionsHistory = new LinkedList<>();
-            session.setAttribute("actionsHistory", actionsHistory);
+            model.addAttribute("actionsHistory", actionsHistory);
 
-            session.setAttribute("balance", currentContract.getBalance());
+            model.addAttribute("balance", currentContract.getBalance());
         } catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        //return "/WEB-INF/jsp/client_lobby.jsp";
     }
 }

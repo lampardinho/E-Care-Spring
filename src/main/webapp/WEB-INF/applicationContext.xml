@@ -9,6 +9,8 @@
     <import resource="security.xml"/>
     <import resource="spring-datasource.xml"/>
     <context:component-scan base-package="com.tsystems.javaschool.ecare.services"/>
-    <aop:aspectj-autoproxy/>
+    <context:component-scan base-package="com.tsystems.javaschool.ecare.controllers"/>
+    <context:component-scan base-package="com.tsystems.javaschool.ecare.controllers.rest"/>
+
 
 </beans>

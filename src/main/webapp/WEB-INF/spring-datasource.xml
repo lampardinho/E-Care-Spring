@@ -12,6 +12,7 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
+    <context:annotation-config/>
     <!-- Scan the the domain package for Spring repositories and services -->
     <context:component-scan base-package="com.tsystems.javaschool.ecare" />
 
@@ -19,12 +20,15 @@
     <jee:jndi-lookup jndi-name="java:jboss/datasources/ecare" id="dataSource"
                      expected-type="javax.sql.DataSource" />
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="em"/>
-    </bean>
-    <bean id="em" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="ecarePU"/>
-    </bean>
+    <!-- Look up the container deployed EntityManager -->
+
+    <!--<jee:jndi-lookup jndi-name="java:/em"
+                     id="entityManager" expected-type="javax.persistence.EntityManager" />-->
+
+    <jee:jndi-lookup id="myEmf" jndi-name="java:/emf"/>
+
+    <!-- Use JTA transactions with the container-deployed EntityManager -->
+    <tx:jta-transaction-manager />
 
     <!-- Use declarative transactions on the services -->
     <tx:annotation-driven />

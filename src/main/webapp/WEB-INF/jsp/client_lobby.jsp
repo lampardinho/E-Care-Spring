@@ -42,12 +42,7 @@
 
 	<body class="navbar-body">
 
-		<%
-			User user = (User)session.getAttribute("user");
-			List<Contract> contracts = (List<Contract>)session.getAttribute("contracts");
-			Contract currentContract = (Contract) session.getAttribute("currentContract");
 
-		%>
 
 
 		<div class="container">
@@ -65,7 +60,7 @@
 							<p class="navbar-text" >Select contract:</p>
 							<ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= currentContract.getPhoneNumber() %></a>
+									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">c:out value="${currentContract.phoneNumber}"/></a>
 									<ul class="dropdown-menu">
 										<c:forEach var="contract" items="${contracts}">
 											<li><a href="#" class="contracts">${contract.phoneNumber}</a></li>
@@ -86,7 +81,7 @@
 
 
 						<div class="navbar-right">
-							<p class="navbar-text" id="user"><%= user.getEmail() %></p>
+							<p class="navbar-text" id="user"><c:out value="${user.email}"/></p>
 
 							<button type="button" class="btn btn-default navbar-btn" id="logout">Sign out</button>
 						</div>
@@ -100,32 +95,22 @@
 
 
 
-
-				<%
-					user = (User)session.getAttribute("user");
-					contracts = (List<Contract>)session.getAttribute("contracts");
-					currentContract = (Contract) session.getAttribute("currentContract");
-					List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
-
-
-				%>
-
 				<div id="contract_info" class="panel panel-info">
 					<div class="panel-heading">
 						<h3 class="panel-title">Contract info</h3>
 					</div>
 					<div class="panel-body">
 						<p >
-							Balance: <%= currentContract.getBalance() %>
+							Balance: <c:out value="${currentContract.balance}" />
 						</p>
 						<p >
-							Owner: <%= currentContract.getUser().getName() + " " + currentContract.getUser().getSurname()%>
+							Owner: <c:out value="${currentContract.user.name} + ' ' + ${currentContract.user.surname}"/>
 						</p>
 						<p class="text-right">
 
 							<button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#cart">
 								<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-								<span class="badge"><%= actionsHistory.size() %></span>
+								<span class="badge"><c:out value="${actionsHistory.size}"/></span>
 							</button>
 
 							<c:choose>

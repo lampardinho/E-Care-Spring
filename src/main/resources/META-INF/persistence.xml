@@ -7,7 +7,10 @@
 
     <persistence-unit name="ecarePU" transaction-type="JTA">
         <jta-data-source>java:jboss/datasources/ecare</jta-data-source>
-        <properties/>
+        <properties>
+            <property name="jboss.entity.manager.jndi.name" value="java:/em"/>
+            <property name="jboss.entity.manager.factory.jndi.name" value="java:/emf"/>
+        </properties>
     </persistence-unit>
 
 

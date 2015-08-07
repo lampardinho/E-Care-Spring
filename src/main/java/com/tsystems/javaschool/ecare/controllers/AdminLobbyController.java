@@ -67,7 +67,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -121,7 +121,7 @@ public class AdminLobbyController
         }
         session.setAttribute("users", users);
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -168,12 +168,12 @@ public class AdminLobbyController
             List<Contract> contracts = contractService.getAllContracts();
             session.setAttribute("contracts", contracts);
 
-            return "/WEB-INF/jsp/admin_lobby.jsp";
+            return "admin_lobby";
 
         } catch (Exception e)
         {
             e.printStackTrace();
-            return "/WEB-INF/jsp/admin_lobby.jsp";
+            return "admin_lobby";
         }
     }
 
@@ -195,7 +195,7 @@ public class AdminLobbyController
             }
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -213,7 +213,7 @@ public class AdminLobbyController
         {
             e.printStackTrace();
         }
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -238,7 +238,7 @@ public class AdminLobbyController
                 session.setAttribute("availableOptions", tariff.getAvailableOptions());
             }
         }
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -268,7 +268,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -279,7 +279,7 @@ public class AdminLobbyController
         String options = request.getParameter("options");
         System.out.println(options);
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -316,7 +316,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -353,7 +353,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -393,7 +393,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -425,7 +425,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 
@@ -465,7 +465,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/admin_lobby.jsp";
+        return "admin_lobby";
     }
 
 

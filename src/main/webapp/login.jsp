@@ -3,7 +3,7 @@
   Date: 29.06.2015
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -36,13 +36,13 @@
 
 		<div class="container">
 
-			<form class="form-signin" method="post" action="lobby">
+			<form class="form-signin" method="post" action="<c:url value='/j_spring_security_check' />">
 				<h2 class="form-signin-heading">Please sign in</h2>
 				<label for="inputEmail" class="sr-only">Email address</label>
-				<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+				<input type="text" name="j_username" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 				<label for="inputPassword" class="sr-only">Password</label>
-				<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="password" name="j_password" id="inputPassword" class="form-control" placeholder="Password" required>
+				<%--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" value="isAdmin" name="isAdmin"> Admin

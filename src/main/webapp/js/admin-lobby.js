@@ -7,7 +7,7 @@
 $('#searchUser').click(function() {
     var phoneNumber = $('#searchPhoneNumber').val();
 
-    $.get('admin_lobby',{action:"find_user", phoneNumber:phoneNumber},function(responseText) {
+    $.get('admin_lobby/find_user',{phoneNumber:phoneNumber},function(responseText) {
         var elements = $(responseText);
         var found = $('#userProfile', elements);
         $('#userProfile').replaceWith(found);
@@ -30,7 +30,7 @@ $('#createUser').click(function()
     var password = $('#user_password').val();
     var isAdmin = $('#user_isAdmin').val();
 
-    $.get('admin_lobby',{action:"add_user",
+    $.get('admin_lobby/add_user',{
         firstName:firstName,
         lastName:lastName,
         birthDate:birthDate,
@@ -50,7 +50,7 @@ $('#createUser').click(function()
 $('.editOptionsButton').click(function() {
     var row = $(this).parent().parent();
     var tariffName = row.children('td.tariff-name').text();
-    $.get('admin_lobby',{action:"get_avail_options", tariffName:tariffName},function(responseText) {
+    $.get('admin_lobby/get_avail_options',{tariffName:tariffName},function(responseText) {
         var elements = $(responseText);
         var found = $('#editOptions', elements);
         $('#editOptions').replaceWith(found);
@@ -73,7 +73,7 @@ $('#createContract').click(function()
     var balance = $('#balance').val();
     var tariff = $('#tariff').val();
 
-    $.get('admin_lobby',{action:"add_contract",
+    $.get('admin_lobby/add_contract',{
         owner:owner,
         phoneNumber:phoneNumber,
         balance:balance,
@@ -99,7 +99,7 @@ $('.unlockButton').click(function() {
         $('#userProfile').modal('hide');
         email = $('#foundUserEmail').text();
     }
-    $.get('admin_lobby',{action:"unlock_user",email:email},function(responseText) {
+    $.get('admin_lobby/unlock_user',{email:email},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -118,7 +118,7 @@ $('.lockButton').click(function() {
         $('#userProfile').modal('hide');
         email = $('#foundUserEmail').text();
     }
-    $.get('lock_user',{email:email},function(responseText) {
+    $.get('admin_lobby/lock_user',{email:email},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -127,15 +127,12 @@ $('.lockButton').click(function() {
 
 
 $('#saveEditOptions').click(function() {
-    /*$('input[name="selectedOptions"]:checked').each(function() {
-        alert(this.value);
-    });*/
-    var data = { action:"save_sel_options", options : []};
+    var data = { options : []};
     $('input[name="selectedOptions"]:checked').each(function() {
         data['options'].push($(this).val());
     });
     alert(data)
-    $.get('admin_lobby',data,function(responseText) {
+    $.get('admin_lobby/save_sel_options',data,function(responseText) {
 
     });
 });
@@ -160,7 +157,7 @@ $('#saveChangeTariff').click(function() {
 
     var tariff = $("#avail_tariffs").val();
 
-    $.get('admin_lobby',{action:"change_tariff", phoneNumber:changeTariffPhone, tariff:tariff},function(responseText) {
+    $.get('admin_lobby/change_tariff',{phoneNumber:changeTariffPhone, tariff:tariff},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -189,7 +186,7 @@ $('#createTariff').click(function() {
         options.push($(this).val());
     });
 
-    $.get('admin_lobby',{action:"add_tariff",
+    $.get('admin_lobby/add_tariff',{
             tariffName:tariffName,
             tariffPrice:tariffPrice,
             options:options},
@@ -219,7 +216,7 @@ $('#saveEditTariff').click(function() {
         options.push($(this).val());
     });
 
-    $.get('admin_lobby',{action:"edit_tariff",
+    $.get('admin_lobby/edit_tariff',{
             tariffName: editTariffName,
             options:options},
         function(responseText) {
@@ -237,7 +234,7 @@ $('#saveEditTariff').click(function() {
 $('#deleteTariff').click(function() {
     $('#editTariff').modal('hide');
 
-    $.get('admin_lobby',{action:"delete_tariff",
+    $.get('admin_lobby/delete_tariff',{
             tariffName: editTariffName},
         function(responseText) {
             var elements = $(responseText);
@@ -270,7 +267,7 @@ $('#editOptionButton').click(function() {
         options.push($(this).val());
     });
 
-    $.get('admin_lobby',{action:"edit_option",
+    $.get('admin_lobby/edit_option',{
             optionName: editOptionName,
             options:options},
         function(responseText) {
@@ -287,7 +284,7 @@ $('#editOptionButton').click(function() {
 
 
 $('#logout').click(function() {
-    $.get('admin_lobby',{action:"sign_out"},function(responseText) {
+    $.get('admin_lobby/sign_out',{},function(responseText) {
         window.location = "../login.jsp";
     });
 });
