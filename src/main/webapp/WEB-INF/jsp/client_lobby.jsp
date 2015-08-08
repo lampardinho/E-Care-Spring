@@ -20,7 +20,7 @@
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="icon" href="../../img/favicon.ico">
+		<link rel="icon" href="${pageContext.request.contextPath}/img/favicon.ico">
 
 		<title>Client lobby</title>
 
@@ -28,15 +28,15 @@
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 
 		<!-- Custom styles for this template -->
-		<link href="/css/ecare.css" rel="stylesheet">
+		<link href="${pageContext.request.contextPath}/css/ecare.css" rel="stylesheet">
 
-		<link href="/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" type="text/css" href="/css/bootstrap-select.min.css">
+		<link href="${pageContext.request.contextPath}/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap-select.min.css">
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<script src="/js/bootstrap-dialog.min.js"></script>
-		<script src="/js/bootstrap-select.min.js"></script>
+		<script src="${pageContext.request.contextPath}/js/bootstrap-dialog.min.js"></script>
+		<script src="${pageContext.request.contextPath}/js/bootstrap-select.min.js"></script>
 
 	</head>
 
@@ -60,7 +60,7 @@
 							<p class="navbar-text" >Select contract:</p>
 							<ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">c:out value="${currentContract.phoneNumber}"/></a>
+									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><c:out value="${currentContract.phoneNumber}"/></a>
 									<ul class="dropdown-menu">
 										<c:forEach var="contract" items="${contracts}">
 											<li><a href="#" class="contracts">${contract.phoneNumber}</a></li>
@@ -104,13 +104,13 @@
 							Balance: <c:out value="${currentContract.balance}" />
 						</p>
 						<p >
-							Owner: <c:out value="${currentContract.user.name} + ' ' + ${currentContract.user.surname}"/>
+							Owner: <c:out value="${currentContract.user.name} ${currentContract.user.surname}"/>
 						</p>
 						<p class="text-right">
 
 							<button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#cart">
 								<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-								<span class="badge"><c:out value="${actionsHistory.size}"/></span>
+								<span class="badge"><c:out value="${actionsHistory.size()}"/></span>
 							</button>
 
 							<c:choose>
@@ -241,7 +241,7 @@
 				</div>
 
 				<div id="myScripts">
-					<script src="/js/client-lobby.js"></script>
+					<script src="${pageContext.request.contextPath}/js/client-lobby.js"></script>
 
 				</div>
 
@@ -251,7 +251,7 @@
 		</div> <!-- /container -->
 
 
-		<script src="/js/ecare.js"></script>
+		<script src="${pageContext.request.contextPath}/js/ecare.js"></script>
 
 	</body>
 </html>

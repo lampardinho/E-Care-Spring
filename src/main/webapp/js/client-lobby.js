@@ -22,7 +22,7 @@ $('#tariffs tbody > tr').click(function() {
         BootstrapDialog.confirm('You are going to change tariff and disable all your current options, are you sure?', function(result){
             if(result) {
                 var tariffName = row.children('td.tariff-name').text();
-                $.get('client_lobby',{action:"change_tariff", tariffName:tariffName},function(responseText) {
+                $.get('client_lobby/change_tariff',{tariffName:tariffName},function(responseText) {
                     var elements = $(responseText);
                     var found = $('#content', elements);
                     $('#content').replaceWith(found);
@@ -54,7 +54,7 @@ $('#options tbody > tr').click(function() {
         BootstrapDialog.confirm('You are going to disable this option, are you sure?', function(result){
             if(result) {
                 var optionName = row.children('td.option-name').text();
-                $.get('client_lobby',{action:"disable_option", optionName:optionName},function(responseText) {
+                $.get('client_lobby/disable_option',{optionName:optionName},function(responseText) {
                     var elements = $(responseText);
                     var found = $('#content', elements);
                     $('#content').replaceWith(found);
@@ -68,7 +68,7 @@ $('#options tbody > tr').click(function() {
         BootstrapDialog.confirm('You are going to add this option, are you sure?', function(result){
             if(result) {
                 var optionName = row.children('td.option-name').text();
-                $.get('client_lobby',{action:"add_option", optionName:optionName},function(responseText) {
+                $.get('client_lobby/add_option',{optionName:optionName},function(responseText) {
                     var elements = $(responseText);
                     var found = $('#content', elements);
                     $('#content').replaceWith(found);
@@ -84,7 +84,7 @@ $('#blockButton').click(function() {
     var button = $(this);
     if ($(button).hasClass("btn-danger"))
     {
-        $.get('client_lobby',{action:"block"},function(responseText) {
+        $.get('client_lobby/block',{},function(responseText) {
             var elements = $(responseText);
             var found1 = $('#options', elements);
             $('#options').replaceWith("");
@@ -101,7 +101,7 @@ $('#blockButton').click(function() {
     }
     else
     {
-        $.get('client_lobby',{action:"unblock"},function(responseText) {
+        $.get('client_lobby/unblock',{},function(responseText) {
             var elements = $(responseText);
             var found = $('#content', elements);
             $('#content').replaceWith(found);
@@ -112,7 +112,7 @@ $('#blockButton').click(function() {
 
 $('#apply').click(function() {
     $('#cart').modal('hide');
-    $.get('client_lobby',{action:"apply_changes"},function(responseText) {
+    $.get('client_lobby/apply_changes',{},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -123,7 +123,7 @@ $('#apply').click(function() {
 
 $('#discard').click(function() {
     $('#cart').modal('hide');
-    $.get('client_lobby',{action:"discard_changes"},function(responseText) {
+    $.get('client_lobby/discard_changes',{},function(responseText) {
         var elements = $(responseText);
         var found = $('#content', elements);
         $('#content').replaceWith(found);
@@ -132,7 +132,5 @@ $('#discard').click(function() {
 
 
 $('#logout').click(function() {
-    $.get('client_lobby',{action:"sign_out"},function(responseText) {
-        window.location = "../login.jsp";
-    });
+    location.href = 'sign_out';
 });

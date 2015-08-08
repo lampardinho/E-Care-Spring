@@ -8,6 +8,9 @@ import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -32,55 +35,40 @@ public class ClientLobbyController
     TariffService tariffService;
 
 
-    @RequestMapping(value = "/select_contract", method = RequestMethod.GET)
-    protected String selectContract(HttpServletRequest request)
+    @RequestMapping(value = "/select_contract/{phoneNumber}", method = RequestMethod.GET)
+    protected String selectContract(@PathVariable int phoneNumber, HttpServletRequest request)
     {
         HttpSession session = request.getSession();
 
-        int phoneNumber = Integer.parseInt(request.getParameter("phoneNumber"));
-        try
+        List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
+        Contract selectedContract = null;
+        for (Contract contract : contracts)
         {
-            List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
-            Contract selectedContract = null;
-            for (Contract contract : contracts)
+            if (contract.getPhoneNumber() == phoneNumber)
             {
-                if (contract.getPhoneNumber() == phoneNumber)
-                {
-                    selectedContract = contract;
-                }
+                selectedContract = contract;
             }
-
-            session.setAttribute("currentContract", selectedContract);
-
-            Tariff currentTariff = selectedContract.getTariff();
-            session.setAttribute("currentTariff", currentTariff);
-
-            session.setAttribute("options", currentTariff.getAvailableOptions());
-
-                    /*List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
-                    for (Tariff tariff : tariffs)
-                    {
-                        if (tariff.getName().equals(currentTariff.getName()))
-                        {
-                            session.setAttribute("options", currentTariff.getAvailableOptions());
-                        }
-                    }*/
-
-            List<Option> disabledOptions = new LinkedList<>();
-            for (Option option : selectedContract.getSelectedOptions())
-            {
-                disabledOptions.addAll(option.getLockedOptions());
-            }
-            session.setAttribute("disabledOptions", disabledOptions);
-
-            session.setAttribute("balance", selectedContract.getBalance());
-
-            return "/WEB-INF/jsp/client_lobby.jsp";
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
-        return "/WEB-INF/jsp/client_lobby.jsp";
+
+        session.setAttribute("currentContract", selectedContract);
+
+        Tariff currentTariff = selectedContract.getTariff();
+        session.setAttribute("currentTariff", currentTariff);
+
+        session.setAttribute("options", currentTariff.getAvailableOptions());
+
+        List<Option> disabledOptions = new LinkedList<>();
+        for (Option option : selectedContract.getSelectedOptions())
+        {
+            disabledOptions.addAll(option.getLockedOptions());
+        }
+        session.setAttribute("disabledOptions", disabledOptions);
+
+        session.setAttribute("balance", selectedContract.getBalance());
+
+        return "client_lobby";
+
+
     }
 
 
@@ -116,7 +104,7 @@ public class ClientLobbyController
         session.setAttribute("disabledOptions", disabledOptions);
 
         session.setAttribute("balance", contract.getBalance());
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        return "client_lobby";
     }
 
 
@@ -131,16 +119,13 @@ public class ClientLobbyController
         List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
         Set<Option> selectedOptions = contract.getSelectedOptions();
-        //System.out.println(selectedOptions.size());
 
         for (Option option : contract.getSelectedOptions())
         {
             if (option.getName().equals(optionName))
             {
-                //System.out.println(contract.getSelectedOptions().size());
                 selectedOptions.remove(option);
                 actionsHistory.add("Disable option " + optionName);
-                //System.out.println(contract.getSelectedOptions().size());
                 break;
             }
         }
@@ -153,7 +138,7 @@ public class ClientLobbyController
         session.setAttribute("disabledOptions", disabledOptions);
 
         session.setAttribute("currentContract", contract);
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        return "client_lobby";
     }
 
 
@@ -187,7 +172,7 @@ public class ClientLobbyController
         session.setAttribute("disabledOptions", disabledOptions);
 
         session.setAttribute("currentContract", contract);
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        return "client_lobby";
     }
 
 
@@ -206,7 +191,7 @@ public class ClientLobbyController
 
         actionsHistory.add("Block contact " + contract.getPhoneNumber());
         session.setAttribute("currentContract", contract);
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        return "client_lobby";
     }
 
 
@@ -227,7 +212,7 @@ public class ClientLobbyController
         session.setAttribute("isBlocked", !contract.getLockedByUsers().isEmpty());
         session.setAttribute("currentContract", contract);
 
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        return "client_lobby";
     }
 
     @RequestMapping(value = "/apply_changes", method = RequestMethod.GET)
@@ -237,18 +222,14 @@ public class ClientLobbyController
 
         List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
         List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
-        try
+
+        for (Contract contract : contracts)
         {
-            for (Contract contract : contracts)
-            {
-                contractService.saveOrUpdateContract(contract);
-            }
-            actionsHistory.clear();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+            contractService.saveOrUpdateContract(contract);
         }
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        actionsHistory.clear();
+
+        return "client_lobby";
     }
 
     @RequestMapping(value = "/discard_changes", method = RequestMethod.GET)
@@ -256,64 +237,50 @@ public class ClientLobbyController
     {
         HttpSession session = request.getSession();
 
-        try
+        
+        User user = (User) session.getAttribute("user");
+        List<Contract> contracts = contractService.getUserContracts(user);
+        session.setAttribute("contracts", contracts);
+
+        Contract currentContract = null;
+        Contract contract = (Contract) session.getAttribute("currentContract");
+        for (Contract c : contracts)
         {
-            User user = (User) session.getAttribute("user");
-            List<Contract> contracts = contractService.getUserContracts(user);
-            session.setAttribute("contracts", contracts);
-
-            Contract currentContract = null;
-            Contract contract = (Contract) session.getAttribute("currentContract");
-            for (Contract c : contracts)
+            if (c.getPhoneNumber() == contract.getPhoneNumber())
             {
-                if (c.getPhoneNumber() == contract.getPhoneNumber())
-                {
-                    currentContract = c;
-                    session.setAttribute("currentContract", currentContract);
-                }
+                currentContract = c;
+                session.setAttribute("currentContract", currentContract);
             }
-
-            Tariff currentTariff = currentContract.getTariff();
-            session.setAttribute("currentTariff", currentTariff);
-
-
-            session.setAttribute("options", currentTariff.getAvailableOptions());
-
-
-            List<Option> disabledOptions = new LinkedList<>();
-            Set<Option> selectedOptions = currentContract.getSelectedOptions();
-            for (Option option : selectedOptions)
-            {
-                Collection<Option> lockedOptions = option.getLockedOptions();
-                for (Option lockedOption : lockedOptions)
-                {
-                    if (disabledOptions.contains(lockedOption)) continue;
-                    disabledOptions.add(lockedOption);
-                }
-            }
-            session.setAttribute("disabledOptions", disabledOptions);
-
-
-            List<String> actionsHistory = new LinkedList<>();
-            session.setAttribute("actionsHistory", actionsHistory);
-
-            session.setAttribute("balance", currentContract.getBalance());
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
 
-        return "/WEB-INF/jsp/client_lobby.jsp";
+        Tariff currentTariff = currentContract.getTariff();
+        session.setAttribute("currentTariff", currentTariff);
+
+
+        session.setAttribute("options", currentTariff.getAvailableOptions());
+
+
+        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> selectedOptions = currentContract.getSelectedOptions();
+        for (Option option : selectedOptions)
+        {
+            Collection<Option> lockedOptions = option.getLockedOptions();
+            for (Option lockedOption : lockedOptions)
+            {
+                if (disabledOptions.contains(lockedOption)) continue;
+                disabledOptions.add(lockedOption);
+            }
+        }
+        session.setAttribute("disabledOptions", disabledOptions);
+
+
+        List<String> actionsHistory = new LinkedList<>();
+        session.setAttribute("actionsHistory", actionsHistory);
+
+        session.setAttribute("balance", currentContract.getBalance());
+
+
+        return "client_lobby";
     }
-
-    @RequestMapping(value = "/sign_out", method = RequestMethod.GET)
-    protected String signOut(HttpServletRequest request)
-    {
-        HttpSession session = request.getSession();
-
-        session.invalidate();
-        return "login.jsp";
-    }
-
 
 }

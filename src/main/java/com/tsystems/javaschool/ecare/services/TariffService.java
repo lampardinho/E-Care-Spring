@@ -2,7 +2,7 @@ package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.TariffDAO;
 import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.util.AppException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,20 +35,17 @@ public class TariffService
      *
      * @param tr tariff entity to be saved or updated.
      * @return saved or updated tariff entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Tariff saveOrUpdateTariff(Tariff tr) throws AppException
+    public Tariff saveOrUpdateTariff(Tariff tr)
     {
         logger.info("Save/update tariff " + tr + " in DB.");
         Tariff tariff = trDao.saveOrUpdate(tr);
         //If DAO returns null method will throws an ECareException.
         if (tariff == null)
         {
-            AppException ecx = new AppException("Failed to save/update tariff " + tr + " in DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to save/update tariff " + tr + " in DB.");
         }
         logger.info("Tariff " + tariff + " saved in DB.");
         //Else tariff will be saved and method returns tariff entity.
@@ -61,20 +58,17 @@ public class TariffService
      *
      * @param id tariff id for search that tariff in the database.
      * @return loaded tariff entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Tariff loadTariff(int id) throws AppException
+    public Tariff loadTariff(int id)
     {
         logger.info("Load tariff with id: " + id + " from DB.");
         Tariff tr = trDao.load(id);
         //If DAO returns null method will throws an ECareException.
         if (tr == null)
         {
-            AppException ecx = new AppException("Tariff with id = " + id + " not found.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Tariff with id = " + id + " not found.");
         }
         logger.info("Tariff " + tr + " loaded from DB.");
         //Else method returns tariff entity.
@@ -86,20 +80,18 @@ public class TariffService
      * This method implements deleting of tariff from the database.
      *
      * @param id tariff id for deleting that tariff from the database.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
-     *                        of entity and DAO returns null.
+     *
      */
     @Transactional
-    public void deleteTariff(int id) throws AppException
+    public void deleteTariff(int id)
     {
         logger.info("Delete tariff with id: " + id + " from DB.");
         Tariff tr = trDao.load(id);
         //If DAO returns null method will throws an ECareException.
         if (tr == null)
         {
-            AppException ecx = new AppException("Tariff with id = " + id + " not exist.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Tariff with id = " + id + " not exist.");
+            return;
         }
         // Else tariff will be deleted from the database.
         trDao.delete(tr);
@@ -113,16 +105,14 @@ public class TariffService
      * @return list of received tariffs.
      */
     @Transactional
-    public List<Tariff> getAllTariffs() throws AppException
+    public List<Tariff> getAllTariffs()
     {
         logger.info("Get all tariffs from DB.");
         List<Tariff> tariffs = trDao.getAll();
         //If DAO returns null method will throws an ECareException.
         if (tariffs == null)
         {
-            AppException ecx = new AppException("Failed to get all tariffs from DB.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Failed to get all tariffs from DB.");
         }
         logger.info("All tariffs obtained from DB.");
         // Else method returns list of tariff entities.

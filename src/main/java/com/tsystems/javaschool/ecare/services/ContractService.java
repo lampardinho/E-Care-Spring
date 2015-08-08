@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.ContractDAO;
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.AppException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,22 +48,15 @@ public class ContractService
      *
      * @param cn contract entity to be saved or updated.
      * @return saved or updated contract entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Contract saveOrUpdateContract(Contract cn) throws AppException
+    public Contract saveOrUpdateContract(Contract cn)
     {
         logger.info("Save/update contract " + cn + " in DB.");
 
         Contract contract = cnDao.saveOrUpdate(cn);
-        //If DAO returns null method will throws an ECareException
-        if (contract == null)
-        {
-            AppException ecx = new AppException("Failed to save/update contract " + cn + " in DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
-        }
+
         logger.info("Contract " + contract + " saved/updated in DB.");
         //else contract will be saved and method returns contract entity
         return contract;
@@ -75,21 +68,14 @@ public class ContractService
      *
      * @param id contract id for search that contract in the database.
      * @return loaded contract entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Contract loadContract(int id) throws AppException
+    public Contract loadContract(int id)
     {
         logger.info("Load contract with id: " + id + " from DB.");
         Contract cn = cnDao.load(id);
-        //If DAO returns null method will throws an ECareException
-        if (cn == null)
-        {
-            AppException ecx = new AppException("Contract with id = " + id + " not found in DB.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
-        }
+
         logger.info("Contract " + cn + " loaded from DB.");
         //else method returns contract entity
         return cn;
@@ -101,11 +87,10 @@ public class ContractService
      *
      * @param number contract number for search that contract in the database.
      * @return found contract entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if DAO returns NoResultException during finding of contract
-     *                        in the database.
+     *
      */
     @Transactional
-    public Contract getContractByPhoneNumber(int number) throws AppException
+    public Contract getContractByPhoneNumber(int number)
     {
         logger.info("Find contract by telephone number: " + number + " in DB.");
         Contract cn = null;
@@ -116,9 +101,8 @@ public class ContractService
             // throws an ECareException.
         } catch (NoResultException nrx)
         {
-            AppException ecx = new AppException("Contract with number: " + number + " not found.", nrx);
-            logger.warn(ecx.getMessage(), nrx);
-            throw ecx;
+            logger.warn(nrx.getMessage(), nrx);
+            return null;
         }
         logger.info("Contract " + cn + " found and loaded from DB.");
         return cn;
@@ -129,20 +113,18 @@ public class ContractService
      * This method implements deleting of contract from the database.
      *
      * @param id contract id for deleting that contract from the database.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
-     *                        of entity and DAO returns null.
+     *
      */
     @Transactional
-    public void deleteContract(int id) throws AppException
+    public void deleteContract(int id)
     {
         logger.info("Delete contract with id: " + id + " from DB.");
         Contract cn = cnDao.load(id);
         //If DAO returns null method will throws an ECareException.
         if (cn == null)
         {
-            AppException ecx = new AppException("Contract with id = " + id + " not exist.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Contract with id = " + id + " not exist.");
+            return;
         }
         // Else contract will be deleted from the database.
         cnDao.delete(cn);
@@ -155,20 +137,18 @@ public class ContractService
      * This method implements receiving of all contracts from the database.
      *
      * @return list of received contracts.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public List<Contract> getAllContracts() throws AppException
+    public List<Contract> getAllContracts()
     {
         logger.info("Get all contracts from DB.");
         List<Contract> contracts = cnDao.getAll();
         //If DAO returns null method will throws an ECareException
         if (contracts == null)
         {
-            AppException ecx = new AppException("Failed to get all contracts from DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to get all contracts from DB.");
+
         }
         logger.info("All contracts obtained from DB.");
         // Else method returns list of contract entities.
@@ -181,20 +161,17 @@ public class ContractService
      *
      * @param user client id for searching of all contracts for this client.
      * @return list of received contracts.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public List<Contract> getUserContracts(User user) throws AppException
+    public List<Contract> getUserContracts(User user)
     {
         logger.info("Get all contracts from DB for client with id: " + user.getUserId() + ".");
         List<Contract> contracts = cnDao.getAllContractsForClient(user.getUserId());
-        //If DAO returns null method will throws an ECareException
         if (contracts == null)
         {
-            AppException ecx = new AppException("Failed to get all contracts from DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to get all contracts from DB.");
+
         }
         logger.info("All contracts for client id: " + user.getUserId() + " obtained from DB.");
         // Else method returns list of contract entities

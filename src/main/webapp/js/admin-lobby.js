@@ -285,6 +285,6 @@ $('#editOptionButton').click(function() {
 
 $('#logout').click(function() {
     $.get('admin_lobby/sign_out',{},function(responseText) {
-        window.location = "../login.jsp";
+        window.location = "../WEB-INF/jsp/login.jsp";
     });
 });

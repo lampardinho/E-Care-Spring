@@ -4,7 +4,7 @@
 
 $( ".contracts" ).click(function(e) {
     var phoneNumber = $(e.target).text();
-    $.get('client_lobby',{action:"select_contract", phoneNumber:phoneNumber},function(responseText) {
+    $.get('client_lobby/select_contract/'+phoneNumber,{},function(responseText) {
         var elements = $(responseText);
         var block = $('#blockButton', elements);
         if ($(block).hasClass("btn-danger"))

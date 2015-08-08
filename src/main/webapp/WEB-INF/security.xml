@@ -9,7 +9,7 @@
         <!--<intercept-url pattern="/lobby*" access="ROLE_USER" />-->
         <!--<intercept-url pattern="/client_lobby*" access="ROLE_USER" />-->
         <!--<intercept-url pattern="/admin_lobby*" access="ROLE_ADMIN" />-->
-        <form-login login-page="/login.jsp"  default-target-url="/lobby" authentication-failure-url="/login.jsp"/>
+        <form-login login-page="/login"  default-target-url="/lobby" authentication-failure-url="/login"/>
         <logout/>
     </http>
     <!--<beans:bean id="expressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />-->

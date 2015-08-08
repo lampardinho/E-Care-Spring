@@ -2,7 +2,6 @@ package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.UserDAO;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.AppException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,11 +33,10 @@ public class UserService
      *
      * @param cl client entity to be saved or updated.
      * @return saved or updated client entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public User saveOrUpdateClient(User cl) throws AppException
+    public User saveOrUpdateClient(User cl)
     {
         logger.info("Save/update client " + cl + " in DB.");
 
@@ -46,9 +44,7 @@ public class UserService
         //If DAO returns null method will throws an ECareException
         if (client == null)
         {
-            AppException ecx = new AppException("Failed to save/update client " + cl + " in DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to save/update client " + cl + " in DB.");
         }
         logger.info("Client " + client + " saved/updated in DB.");
         //else client will be saved and method returns client entity
@@ -61,11 +57,10 @@ public class UserService
      *
      * @param id client id for search that client in the database.
      * @return loaded client entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public User loadClient(int id) throws AppException
+    public User loadClient(int id)
     {
         logger.info("Load client with id: " + id + " from DB.");
 
@@ -73,9 +68,7 @@ public class UserService
         //If DAO returns null method will throws an ECareException
         if (cl == null)
         {
-            AppException ecx = new AppException("Client with id = " + id + " not found in DB.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Client with id = " + id + " not found in DB.");
         }
         logger.info("Client " + cl + " loaded from DB.");
         //else method returns client entity
@@ -90,11 +83,10 @@ public class UserService
      * @param login    client login for search that client in the database.
      * @param password client password for search that client in the database.
      * @return found client entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if DAO returns NoResultException during finding of client
-     *                        in the database.
+     *
      */
     @Transactional
-    public User findClient(String login, String password) throws AppException
+    public User findClient(String login, String password)
     {
         logger.info("Find client with login: " + login + " and password:" + password + " in DB.");
         User cl = null;
@@ -106,9 +98,7 @@ public class UserService
             // throws an ECareException.
         } catch (NoResultException nrx)
         {
-            AppException ecx = new AppException("Incorrect login/password or client does not exist.", nrx);
-            logger.warn(ecx.getMessage(), nrx);
-            throw ecx;
+            logger.warn("Incorrect login/password or client does not exist.", nrx);
         }
         logger.info("Client " + cl + " found and loaded from DB.");
         return cl;
@@ -120,11 +110,10 @@ public class UserService
      *
      * @param number telephone number of client for search that client in the database.
      * @return found client entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if DAO returns NoResultException during finding of client
-     *                        in the database.
+     *
      */
     @Transactional
-    public User findClientByNumber(int number) throws AppException
+    public User findClientByNumber(int number)
     {
         logger.info("Find client with telephone number: " + number + " in DB.");
         User cl = null;
@@ -136,9 +125,7 @@ public class UserService
             // throws an ECareException.
         } catch (NoResultException nrx)
         {
-            AppException ecx = new AppException("Client with number: " + number + " not found.", nrx);
-            logger.warn(ecx.getMessage(), nrx);
-            throw ecx;
+            logger.warn("Client with number: " + number + " not found.", nrx);
         }
         logger.info("Client " + cl + " found and loaded from DB.");
         return cl;
@@ -149,20 +136,18 @@ public class UserService
      * Method implements deleting of clients from the database.
      *
      * @param id client id for deleting that client from the database.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
-     *                        of entity and DAO returns null.
+     *
      */
     @Transactional
-    public void deleteClient(int id) throws AppException
+    public void deleteClient(int id)
     {
         logger.info("Delete client with id: " + id + " from DB.");
         User cl = clDao.load(id);
         //If DAO returns null method will throws an ECareException.
         if (cl == null)
         {
-            AppException ecx = new AppException("Client with id = " + id + " not exist.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Client with id = " + id + " not exist.");
+            return;
         }
         // Else client will be deleted from the database.
         clDao.delete(cl);
@@ -174,20 +159,17 @@ public class UserService
      * Method implements receiving of all clients from the database.
      *
      * @return list of received clients.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public List<User> getAllClients() throws AppException
+    public List<User> getAllClients()
     {
         logger.info("Get all clients from DB.");
         List<User> clients = clDao.getAll();
         //If DAO returns null method will throws an ECareException.
         if (clients == null)
         {
-            AppException ecx = new AppException("Failed to get all clients from DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to get all clients from DB.");
         }
         logger.info("All clients obtained from DB.");
         // Else method returns list of client entities

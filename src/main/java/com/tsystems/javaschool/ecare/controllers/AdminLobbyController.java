@@ -39,6 +39,29 @@ public class AdminLobbyController
     @Autowired
     OptionService optionService;
 
+    @RequestMapping(value = "/admin_clients")
+    protected String adminClients(HttpServletRequest request)
+    {
+        return "admin_clients";
+    }
+
+    @RequestMapping(value = "/admin_contracts")
+    protected String adminContracts(HttpServletRequest request)
+    {
+        return "admin_contracts";
+    }
+
+    @RequestMapping(value = "/admin_tariffs")
+    protected String adminTariffs(HttpServletRequest request)
+    {
+        return "admin_tariffs";
+    }
+
+    @RequestMapping(value = "/admin_options")
+    protected String adminOptions(HttpServletRequest request)
+    {
+        return "admin_options";
+    }
 
     @RequestMapping(value = "/lock_user", method = RequestMethod.GET)
     protected String lockUser(HttpServletRequest request)
@@ -469,12 +492,5 @@ public class AdminLobbyController
     }
 
 
-    @RequestMapping(value = "/sign_out", method = RequestMethod.GET)
-    protected String signOut(HttpServletRequest request)
-    {
-        HttpSession session = request.getSession();
 
-        session.invalidate();
-        return "login.jsp";
-    }
 }

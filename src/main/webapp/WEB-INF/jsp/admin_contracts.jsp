@@ -39,9 +39,7 @@
 
 	<body>
 
-		<%--<%--%>
-			<%--User user = (User)session.getAttribute("user");--%>
-		<%--%>--%>
+
 
 
 		<div class="container">
@@ -60,12 +58,16 @@
 							<button type="button" class="btn btn-default navbar-btn" id="logout">Sign out</button>
 						</div>
 
-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-							<li class="active"><a href="#clients" data-toggle="tab">Clients</a></li>
-							<li><a id="contracts_tab" href="#contracts" data-toggle="tab">Contracts</a></li>
+						<%--<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+							<li><a href="admin_lobby/admin_clients">Clients</a></li>
+							<li class="active"><a id="contracts_tab" href="#contracts" data-toggle="tab">Contracts</a></li>
 							<li><a id="tariffs_tab" href="#tariffs" data-toggle="tab">Tariffs</a></li>
 							<li><a id="options_tab" href="admin_options.jsp#options" data-toggle="tab">Options</a></li>
-						</ul>
+						</ul>--%>
+
+						<a href="admin_lobby/admin_clients">Clients</a>
+						<a id="contracts_tab" href="admin_lobby/admin_contracts">Contracts</a>
+						<a id="tariffs_tab" href="admin_lobby/admin_tariffs">Tariffs</a>
 
 					</div><!--/.nav-collapse -->
 				</div><!--/.container-fluid -->

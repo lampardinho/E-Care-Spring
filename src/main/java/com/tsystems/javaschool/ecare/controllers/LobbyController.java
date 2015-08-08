@@ -46,13 +46,30 @@ public class LobbyController
     @Autowired
     OptionService optionService;
 
-    @RequestMapping(value = "/lobby", method = RequestMethod.GET)
-    protected String login(ModelMap model, Authentication authentication)
+    @RequestMapping(value = "/login")
+    protected String enterLobby(HttpServletRequest request)
     {
+        return "login";
+    }
+
+    @RequestMapping(value = "/sign_out", method = RequestMethod.GET)
+    protected String signOut(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+
+        session.invalidate();
+        return "login";
+    }
+
+    @RequestMapping(value = "/lobby", method = RequestMethod.GET)
+    protected String enterLobby(HttpServletRequest request, Authentication authentication)
+    {
+        HttpSession session = request.getSession();
+        
         //String name = principal.getName();
 
         User user = userService.findClient("1lampard@mail.ru", "qwerty");
-        model.addAttribute("user", user);
+        session.setAttribute("user", user);
 
         String role = null;
         for (GrantedAuthority authority : authentication.getAuthorities()) {
@@ -61,33 +78,34 @@ public class LobbyController
 
         if (role.equals("ROLE_ADMIN"))
         {
-            initAdmin(model);
-            //return new ModelAndView("admin_lobby", model);
-            return "admin_lobby";
+            initAdmin(request);
+            return "admin_clients";
         }
         else
         {
-            initClient(model);
+            initClient(request);
             return "client_lobby";
         }
 
     }
 
-    private void initAdmin(ModelMap model)
+    private void initAdmin(HttpServletRequest request)
     {
+        HttpSession session = request.getSession();
+
         try
         {
             List<User> users = userService.getAllClients();
-            model.addAttribute("users", users);
+            session.setAttribute("users", users);
 
             List<Contract> contracts = contractService.getAllContracts();
-            model.addAttribute("contracts", contracts);
+            session.setAttribute("contracts", contracts);
 
             List<Tariff> tariffs = tariffService.getAllTariffs();
-            model.addAttribute("tariffs", tariffs);
+            session.setAttribute("tariffs", tariffs);
 
             List<Option> options = optionService.getAllOptions();
-            model.addAttribute("options", options);
+            session.setAttribute("options", options);
 
             List<User> lockedUsers = new LinkedList<>();
             for (User user : users)
@@ -105,7 +123,7 @@ public class LobbyController
                 if (isUserLocked && !userContracts.isEmpty())
                     lockedUsers.add(user);
             }
-            model.addAttribute("lockedUsers", lockedUsers);
+            session.setAttribute("lockedUsers", lockedUsers);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -113,26 +131,28 @@ public class LobbyController
     }
 
 
-    private void initClient(ModelMap model)
+    private void initClient(HttpServletRequest request)
     {
-        User user = (User) model.get("user");
+        HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
 
         try
         {
             List<Contract> contracts = contractService.getUserContracts(user);
-            model.addAttribute("contracts", contracts);
+            session.setAttribute("contracts", contracts);
 
             List<Tariff> tariffs = tariffService.getAllTariffs();
-            model.addAttribute("tariffs", tariffs);
+            session.setAttribute("tariffs", tariffs);
 
             Contract currentContract = contracts.get(0);
-            model.addAttribute("currentContract", currentContract);
+            session.setAttribute("currentContract", currentContract);
 
             Tariff currentTariff = currentContract.getTariff();
-            model.addAttribute("currentTariff", currentTariff);
+            session.setAttribute("currentTariff", currentTariff);
 
 
-            model.addAttribute("options", currentTariff.getAvailableOptions());
+            session.setAttribute("options", currentTariff.getAvailableOptions());
 
 
             List<Option> disabledOptions = new LinkedList<>();
@@ -146,13 +166,13 @@ public class LobbyController
                     disabledOptions.add(lockedOption);
                 }
             }
-            model.addAttribute("disabledOptions", disabledOptions);
+            session.setAttribute("disabledOptions", disabledOptions);
 
 
             List<String> actionsHistory = new LinkedList<>();
-            model.addAttribute("actionsHistory", actionsHistory);
+            session.setAttribute("actionsHistory", actionsHistory);
 
-            model.addAttribute("balance", currentContract.getBalance());
+            session.setAttribute("balance", currentContract.getBalance());
         } catch (Exception e)
         {
             e.printStackTrace();

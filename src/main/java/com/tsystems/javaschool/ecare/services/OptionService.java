@@ -2,7 +2,7 @@ package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.util.AppException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,20 +38,17 @@ public class OptionService
      *
      * @param op option entity to be saved or updated.
      * @return saved or updated option entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Option saveOrUpdateOption(Option op) throws AppException
+    public Option saveOrUpdateOption(Option op)
     {
         logger.info("Save/update option " + op + " in DB.");
         Option option = opDao.saveOrUpdate(op);
         //If DAO returns null method will throws an ECareException
         if (option == null)
         {
-            AppException ecx = new AppException("Failed to save/update option " + op + " in DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to save/update option " + op + " in DB.");
         }
         logger.info("Option " + option + " saved in DB.");
         //else option will be saved and method returns option entity
@@ -64,20 +61,17 @@ public class OptionService
      *
      * @param id option id for search that option in the database.
      * @return loaded option entity.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public Option loadOption(int id) throws AppException
+    public Option loadOption(int id)
     {
         logger.info("Load option with id: " + id + " from DB.");
         Option op = opDao.load(id);
         //If DAO returns null method will throws an ECareException
         if (op == null)
         {
-            AppException ecx = new AppException("Option with id = " + id + " not found in DB.");
-            logger.warn(String.valueOf(ecx), ecx);
-            throw ecx;
+            logger.warn("Option with id = " + id + " not found in DB.");
         }
         logger.info("Options " + op + " loaded from DB.");
         //else method returns option entity
@@ -88,20 +82,18 @@ public class OptionService
      * This method implements deleting of option from the database.
      *
      * @param id option id for deleting that option from the database.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
-     *                        of entity and DAO returns null.
+     *
      */
     @Transactional
-    public void deleteOption(int id) throws AppException
+    public void deleteOption(int id)
     {
         logger.info("Delete option with id: " + id + " from DB.");
         Option op = opDao.load(id);
         //If DAO returns null method will throws an ECareException
         if (op == null)
         {
-            AppException ecx = new AppException("Option with id = " + id + " not exist.");
-            logger.warn(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.warn("Option with id = " + id + " not exist.");
+            return;
         }
         // Else option will be deleted from the database.
         opDao.delete(op);
@@ -113,20 +105,17 @@ public class OptionService
      * This method implements receiving of all options from the database.
      *
      * @return list of received options.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public List<Option> getAllOptions() throws AppException
+    public List<Option> getAllOptions()
     {
         logger.info("Get all options from DB.");
         List<Option> options = opDao.getAll();
         //If DAO returns null method will throws an ECareException
         if (options == null)
         {
-            AppException ecx = new AppException("Failed to get all options from DB.");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to get all options from DB.");
         }
         logger.info("All options obtained from DB.");
         // Else method returns list of option entities
@@ -139,20 +128,17 @@ public class OptionService
      *
      * @param id contract id for searching of all options for this contract.
      * @return list of received options.
-     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
-     *                        and DAO returns null.
+     *
      */
     @Transactional
-    public List<Option> getAllOptionsForTariff(long id) throws AppException
+    public List<Option> getAllOptionsForTariff(long id)
     {
         logger.info("Get all options from DB for tariff with id: " + id + ".");
         List<Option> options = opDao.getAllOptionsForTariff(id);
         //If DAO returns null method will throws an ECareException
         if (options == null)
         {
-            AppException ecx = new AppException("Failed to get all options from DB for tariff id: " + id + ".");
-            logger.error(ecx.getMessage(), ecx);
-            throw ecx;
+            logger.error("Failed to get all options from DB for tariff id: " + id + ".");
         }
         logger.info("All options for tariff id: " + id + " obtained from DB.");
         // Else method returns list of option entities

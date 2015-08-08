@@ -1,4 +1,4 @@
-<%@ page import="com.tsystems.javaschool.ecare.entities.User" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%--
   Created by IntelliJ IDEA.
@@ -11,6 +11,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -55,12 +56,16 @@
 							<button type="button" class="btn btn-default navbar-btn" id="logout">Sign out</button>
 						</div>
 
-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-							<li class="active"><a href="admin_clients.jsp#clients" data-toggle="tab">Clients</a></li>
-							<li><a id="contracts_tab" href="admin_contracts.jsp#contracts" data-toggle="tab">Contracts</a></li>
-							<li><a id="tariffs_tab" href="admin_tariffs.jsp#tariffs" data-toggle="tab">Tariffs</a></li>
-							<li><a id="options_tab" href="admin_options.jsp#options" data-toggle="tab">Options</a></li>
-						</ul>
+						<%--<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+							<li class="active"><a href="admin_lobby/admin_clients">Clients</a></li>
+							<li><a id="contracts_tab" href="admin_lobby/admin_contracts">Contracts</a></li>
+							<li><a id="tariffs_tab" href="admin_lobby/admin_tariffs">Tariffs</a></li>
+							<li><a id="options_tab" href="admin_lobby/admin_options">Options</a></li>
+						</ul>--%>
+
+						<a href="admin_lobby/admin_clients">Clients</a>
+						<a id="contracts_tab" href="admin_lobby/admin_contracts">Contracts</a>
+						<a id="tariffs_tab" href="admin_lobby/admin_tariffs">Tariffs</a>
 
 					</div><!--/.nav-collapse -->
 				</div><!--/.container-fluid -->
@@ -70,6 +75,8 @@
 			<!-- Main component for a primary marketing message or call to action -->
 			<div id="content" class="jumbotron">
 				<div id="my-tab-content" class="tab-content">
+
+					<a href="http://google.com">link</a>
 
 					<div class="tab-pane active" id="clients">
 						<div id="clients_info" class="panel panel-info">
