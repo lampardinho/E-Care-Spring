@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the implementation of IContractService for working with contract DAO
@@ -140,10 +140,10 @@ public class ContractService
      *
      */
     @Transactional
-    public List<Contract> getAllContracts()
+    public Set<Contract> getAllContracts()
     {
         logger.info("Get all contracts from DB.");
-        List<Contract> contracts = cnDao.getAll();
+        Set<Contract> contracts = cnDao.getAll();
         //If DAO returns null method will throws an ECareException
         if (contracts == null)
         {
@@ -164,10 +164,10 @@ public class ContractService
      *
      */
     @Transactional
-    public List<Contract> getUserContracts(User user)
+    public Set<Contract> getUserContracts(User user)
     {
         logger.info("Get all contracts from DB for client with id: " + user.getUserId() + ".");
-        List<Contract> contracts = cnDao.getAllContractsForClient(user.getUserId());
+        Set<Contract> contracts = cnDao.getAllContractsForClient(user.getUserId());
         if (contracts == null)
         {
             logger.error("Failed to get all contracts from DB.");

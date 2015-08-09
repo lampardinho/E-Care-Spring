@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Kolia on 30.07.2015.
@@ -27,16 +26,26 @@ public class WebServiceController
     UserService userService;
 
     @RequestMapping("/tariffs")
-    public List<Tariff> getTariffs() {
+    public Set<String> getTariffs() {
 
-        return tariffService.getAllTariffs();
+        Set<Tariff> tariffs = tariffService.getAllTariffs();
+        Set<String> names = new HashSet<>();
+        for (Iterator<Tariff> it = tariffs.iterator(); it.hasNext(); )
+        {
+            names.add(it.next().getName());
+        }
+        return names;
     }
 
     @RequestMapping("/users")
-    public List<User> getUsers(@RequestParam(value="tariffName") String tariffName)
+    public Set<String> getUsers(@RequestParam(value="tariff") String tariff)
     {
-        List<User> allUsers = userService.getAllClients();
-
-        return allUsers;
+        Set<User> users = userService.getUsersByTariff(tariff);
+        Set<String> names = new HashSet<>();
+        for (Iterator<User> it = users.iterator(); it.hasNext(); )
+        {
+            names.add(it.next().getName());
+        }
+        return names;
     }
 }

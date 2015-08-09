@@ -70,8 +70,8 @@ public class AdminLobbyController
         String email = request.getParameter("email");
         try
         {
-            List<User> users = (List<User>) session.getAttribute("users");
-            List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
+            Set<User> users = (Set<User>) session.getAttribute("users");
+            Set<User> lockedUsers = (Set<User>) session.getAttribute("lockedUsers");
             User admin = (User) session.getAttribute("user");
             for (User user : users)
             {
@@ -134,7 +134,7 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        List<User> users = null;
+        Set<User> users = null;
         try
         {
             users = userService.getAllClients();
@@ -158,7 +158,7 @@ public class AdminLobbyController
         String balance = request.getParameter("balance");
         String tariffName = request.getParameter("tariff");
 
-        List<User> users = null;
+        Set<User> users = null;
         try
         {
             users = userService.getAllClients();
@@ -172,7 +172,7 @@ public class AdminLobbyController
                 }
             }
 
-            List<Tariff> tariffs = tariffService.getAllTariffs();
+            Set<Tariff> tariffs = tariffService.getAllTariffs();
 
 
             Tariff tariff = null;
@@ -188,7 +188,7 @@ public class AdminLobbyController
 
             contractService.saveOrUpdateContract(contract);
 
-            List<Contract> contracts = contractService.getAllContracts();
+            Set<Contract> contracts = contractService.getAllContracts();
             session.setAttribute("contracts", contracts);
 
             return "admin_lobby";
@@ -207,7 +207,7 @@ public class AdminLobbyController
     {
         HttpSession session = request.getSession();
         String phoneNumber = request.getParameter("phoneNumber");
-        List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
+        Set<Contract> contracts = (Set<Contract>) session.getAttribute("contracts");
 
 
         for (Contract contract : contracts)
@@ -228,7 +228,7 @@ public class AdminLobbyController
     {
         String tariffName = request.getParameter("tariff");
 
-        List<Tariff> tariffs = null;
+        Set<Tariff> tariffs = null;
         try
         {
             tariffs = tariffService.getAllTariffs();
@@ -246,7 +246,7 @@ public class AdminLobbyController
         HttpSession session = request.getSession();
         String tariffName = request.getParameter("tariffName");
 
-        List<Tariff> tariffs = null;
+        Set<Tariff> tariffs = null;
         try
         {
             tariffs = tariffService.getAllTariffs();
@@ -272,8 +272,8 @@ public class AdminLobbyController
         String email = request.getParameter("email");
         try
         {
-            List<User> users = (List<User>) session.getAttribute("users");
-            List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
+            Set<User> users = (Set<User>) session.getAttribute("users");
+            Set<User> lockedUsers = (Set<User>) session.getAttribute("lockedUsers");
             for (User user : users)
             {
                 if (user.getEmail().equals(email))
@@ -313,7 +313,7 @@ public class AdminLobbyController
         String tariffName = request.getParameter("tariff");
         String phoneNumber = request.getParameter("phoneNumber");
 
-        List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
+        Set<Tariff> tariffs = (Set<Tariff>) session.getAttribute("tariffs");
         Tariff newTariff = null;
         for (Tariff tariff : tariffs)
         {
@@ -324,7 +324,7 @@ public class AdminLobbyController
         }
         try
         {
-            List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
+            Set<Contract> contracts = (Set<Contract>) session.getAttribute("contracts");
             for (Contract contract : contracts)
             {
                 if (contract.getPhoneNumber() == Integer.parseInt(phoneNumber))
@@ -350,8 +350,8 @@ public class AdminLobbyController
         String tariffName = request.getParameter("tariffName");
         String tariffPrice = request.getParameter("tariffPrice");
         String[] optionNames = request.getParameterValues("options[]");
-        List<Option> options = (List<Option>) session.getAttribute("options");
-        List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
+        Set<Tariff> tariffs = (Set<Tariff>) session.getAttribute("tariffs");
 
         Set<Option> tariffOptions = new HashSet<>();
         for (String optionName : optionNames)
@@ -386,8 +386,8 @@ public class AdminLobbyController
         HttpSession session = request.getSession();
         String tariffName = request.getParameter("tariffName");
         String[] optionNames = request.getParameterValues("options[]");
-        List<Option> options = (List<Option>) session.getAttribute("options");
-        List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
+        Set<Tariff> tariffs = (Set<Tariff>) session.getAttribute("tariffs");
 
         Set<Option> tariffOptions = new HashSet<>();
         for (String optionName : optionNames)
@@ -426,7 +426,7 @@ public class AdminLobbyController
     {
         HttpSession session = request.getSession();
         String tariffName = request.getParameter("tariffName");
-        List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
+        Set<Tariff> tariffs = (Set<Tariff>) session.getAttribute("tariffs");
 
         try
         {
@@ -459,7 +459,7 @@ public class AdminLobbyController
         HttpSession session = request.getSession();
         String optionName = request.getParameter("optionName");
         String[] optionNames = request.getParameterValues("options[]");
-        List<Option> options = (List<Option>) session.getAttribute("options");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
 
         Set<Option> lockedOptions = new HashSet<>();
         for (String lockedName : optionNames)

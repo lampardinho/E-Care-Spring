@@ -1,6 +1,6 @@
 package com.tsystems.javaschool.ecare.dao;
 
-import java.util.List;
+import java.util.Set;
 
 
 public interface IAbstractDAO<T>
@@ -11,7 +11,7 @@ public interface IAbstractDAO<T>
 
     public void delete(T t);
 
-    public List<T> getAll();
+    public Set<T> getAll();
 
     public void deleteAll();
 

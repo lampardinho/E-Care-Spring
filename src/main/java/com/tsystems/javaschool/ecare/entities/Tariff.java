@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "tariffs", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery(name = "Tariff.getAllTariffs", query = "SELECT t FROM Tariff t"),
+                @NamedQuery(name = "Tariff.getAllTariffs", query = "SELECT distinct t FROM Tariff t"),
                 @NamedQuery(name = "Tariff.deleteAllTariffs", query = "DELETE FROM Tariff"),
                 @NamedQuery(name = "Tariff.size", query = "SELECT count(t) FROM Tariff t")
         })

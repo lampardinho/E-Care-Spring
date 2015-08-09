@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the implementation of ITariffService for working with tariff DAO
@@ -105,10 +105,10 @@ public class TariffService
      * @return list of received tariffs.
      */
     @Transactional
-    public List<Tariff> getAllTariffs()
+    public Set<Tariff> getAllTariffs()
     {
         logger.info("Get all tariffs from DB.");
-        List<Tariff> tariffs = trDao.getAll();
+        Set<Tariff> tariffs = trDao.getAll();
         //If DAO returns null method will throws an ECareException.
         if (tariffs == null)
         {

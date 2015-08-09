@@ -1,13 +1,15 @@
 package com.tsystems.javaschool.ecare.dao;
 
 
+import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository("optionDao")
 public class OptionDAO implements IAbstractDAO<Option>
@@ -43,9 +45,9 @@ public class OptionDAO implements IAbstractDAO<Option>
     }
 
     @Override
-    public List<Option> getAll()
+    public Set<Option> getAll()
     {
-        return em.createNamedQuery("Option.getAllOptions", Option.class).getResultList();
+        return new HashSet<>(em.createNamedQuery("Option.getAllOptions", Option.class).getResultList());
     }
 
     @Override
@@ -54,11 +56,11 @@ public class OptionDAO implements IAbstractDAO<Option>
         em.createNamedQuery("Option.deleteAllOptions").executeUpdate();
     }
 
-    public List<Option> getAllOptionsForTariff(long id)
+    public Set<Option> getAllOptionsForTariff(long id)
     {
         Query query = em.createNamedQuery("Option.getAllOptionsForTariff", Option.class);
         //query.setParameter("id", id);
-        return query.getResultList();
+        return new HashSet<>(query.getResultList());
     }
 
     public void deleteAllOptionsForTariff(long id)

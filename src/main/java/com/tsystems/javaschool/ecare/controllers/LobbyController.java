@@ -23,10 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -95,23 +92,23 @@ public class LobbyController
 
         try
         {
-            List<User> users = userService.getAllClients();
+            Set<User> users = userService.getAllClients();
             session.setAttribute("users", users);
 
-            List<Contract> contracts = contractService.getAllContracts();
+            Set<Contract> contracts = contractService.getAllContracts();
             session.setAttribute("contracts", contracts);
 
-            List<Tariff> tariffs = tariffService.getAllTariffs();
+            Set<Tariff> tariffs = tariffService.getAllTariffs();
             session.setAttribute("tariffs", tariffs);
 
-            List<Option> options = optionService.getAllOptions();
+            Set<Option> options = optionService.getAllOptions();
             session.setAttribute("options", options);
 
             List<User> lockedUsers = new LinkedList<>();
             for (User user : users)
             {
                 boolean isUserLocked = true;
-                List<Contract> userContracts = contractService.getUserContracts(user);
+                Set<Contract> userContracts = contractService.getUserContracts(user);
                 for (Contract contract : userContracts)
                 {
                     if (contract.getLockedByUsers().isEmpty())
@@ -139,13 +136,14 @@ public class LobbyController
 
         try
         {
-            List<Contract> contracts = contractService.getUserContracts(user);
+            Set<Contract> contracts = contractService.getUserContracts(user);
             session.setAttribute("contracts", contracts);
 
-            List<Tariff> tariffs = tariffService.getAllTariffs();
+            Set<Tariff> tariffs = tariffService.getAllTariffs();
             session.setAttribute("tariffs", tariffs);
 
-            Contract currentContract = contracts.get(0);
+            Iterator<Contract> it = contracts.iterator();
+            Contract currentContract = it.next();
             session.setAttribute("currentContract", currentContract);
 
             Tariff currentTariff = currentContract.getTariff();

@@ -16,9 +16,10 @@ import java.util.Set;
                 @NamedQuery(name = "User.getAllUsers", query = "SELECT c FROM User c"),
                 @NamedQuery(name = "User.findUserByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
                 @NamedQuery(name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
-                @NamedQuery(name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
-                @NamedQuery(name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
-                @NamedQuery(name = "Client.size", query = "SELECT count(c) FROM User c WHERE c.isAdmin = 0")
+                @NamedQuery(name = "User.findUserByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
+                @NamedQuery(name = "User.findUsersByTariff", query = "SELECT distinct c.user FROM Contract c WHERE c.tariff.name = :tariff"),
+                @NamedQuery(name = "User.deleteAllUsers", query = "DELETE FROM User WHERE isAdmin = 0"),
+                @NamedQuery(name = "User.size", query = "SELECT count(c) FROM User c WHERE c.isAdmin = 0")
         })
 public class User implements Serializable
 {

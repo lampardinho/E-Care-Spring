@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the implementation of IOptionService for working with option DAO
@@ -108,10 +108,10 @@ public class OptionService
      *
      */
     @Transactional
-    public List<Option> getAllOptions()
+    public Set<Option> getAllOptions()
     {
         logger.info("Get all options from DB.");
-        List<Option> options = opDao.getAll();
+        Set<Option> options = opDao.getAll();
         //If DAO returns null method will throws an ECareException
         if (options == null)
         {
@@ -131,10 +131,10 @@ public class OptionService
      *
      */
     @Transactional
-    public List<Option> getAllOptionsForTariff(long id)
+    public Set<Option> getAllOptionsForTariff(long id)
     {
         logger.info("Get all options from DB for tariff with id: " + id + ".");
-        List<Option> options = opDao.getAllOptionsForTariff(id);
+        Set<Option> options = opDao.getAllOptionsForTariff(id);
         //If DAO returns null method will throws an ECareException
         if (options == null)
         {

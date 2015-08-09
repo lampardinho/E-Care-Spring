@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository("userDao")
 public class UserDAO implements IAbstractDAO<User>
@@ -50,26 +51,33 @@ public class UserDAO implements IAbstractDAO<User>
     }
 
     @Override
-    public List<User> getAll()
+    public Set<User> getAll()
     {
-        return em.createNamedQuery("User.getAllUsers", User.class).getResultList();
+        return new HashSet<>(em.createNamedQuery("User.getAllUsers", User.class).getResultList());
+    }
+
+    public Set<User> getUsersByTariff(String tariffName)
+    {
+        Query query = em.createNamedQuery("User.findUsersByTariff", User.class);
+        query.setParameter("tariff", tariffName);
+        return new HashSet<>(query.getResultList());
     }
 
     @Override
     public void deleteAll()
     {
-        em.createNamedQuery("Client.deleteAllClients").executeUpdate();
+        em.createNamedQuery("User.deleteAllUsers").executeUpdate();
     }
 
     @Override
     public long getCount()
     {
-        return ((Number) em.createNamedQuery("Client.size").getSingleResult()).longValue();
+        return ((Number) em.createNamedQuery("User.size").getSingleResult()).longValue();
     }
 
     public User findUserByLogin(String login)
     {
-        Query query = em.createNamedQuery("Client.findClientByLogin", User.class);
+        Query query = em.createNamedQuery("User.findUserByLogin", User.class);
         query.setParameter("login", login);
         return (User) query.getSingleResult();
     }

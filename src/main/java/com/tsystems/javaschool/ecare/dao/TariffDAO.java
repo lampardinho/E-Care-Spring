@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository("tariffDao")
 public class TariffDAO implements IAbstractDAO<Tariff>
@@ -34,9 +35,9 @@ public class TariffDAO implements IAbstractDAO<Tariff>
     }
 
     @Override
-    public List<Tariff> getAll()
+    public Set<Tariff> getAll()
     {
-        return em.createNamedQuery("Tariff.getAllTariffs", Tariff.class).getResultList();
+        return new HashSet<>(em.createNamedQuery("Tariff.getAllTariffs", Tariff.class).getResultList());
     }
 
     @Override

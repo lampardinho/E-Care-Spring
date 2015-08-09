@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the implementation of IClientService for working with client DAO
@@ -162,11 +162,27 @@ public class UserService
      *
      */
     @Transactional
-    public List<User> getAllClients()
+    public Set<User> getAllClients()
     {
         logger.info("Get all clients from DB.");
-        List<User> clients = clDao.getAll();
+        Set<User> clients = clDao.getAll();
         //If DAO returns null method will throws an ECareException.
+        if (clients == null)
+        {
+            logger.error("Failed to get all clients from DB.");
+        }
+        logger.info("All clients obtained from DB.");
+        // Else method returns list of client entities
+        return clients;
+
+    }
+
+
+    @Transactional
+    public Set<User> getUsersByTariff(String tariffName)
+    {
+        logger.info("Get all clients from DB.");
+        Set<User> clients = clDao.getUsersByTariff(tariffName);
         if (clients == null)
         {
             logger.error("Failed to get all clients from DB.");

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Set;
 
 /**
@@ -40,7 +40,7 @@ public class ClientLobbyController
     {
         HttpSession session = request.getSession();
 
-        List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
+        Set<Contract> contracts = (Set<Contract>) session.getAttribute("contracts");
         Contract selectedContract = null;
         for (Contract contract : contracts)
         {
@@ -57,7 +57,7 @@ public class ClientLobbyController
 
         session.setAttribute("options", currentTariff.getAvailableOptions());
 
-        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> disabledOptions = new HashSet<>();
         for (Option option : selectedContract.getSelectedOptions())
         {
             disabledOptions.addAll(option.getLockedOptions());
@@ -80,8 +80,8 @@ public class ClientLobbyController
         String tariffName = request.getParameter("tariffName");
 
         Contract contract = (Contract) session.getAttribute("currentContract");
-        List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<Tariff> tariffs = (Set<Tariff>) session.getAttribute("tariffs");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         for (Tariff tariff : tariffs)
             if (tariff.getName().equals(tariffName))
@@ -100,7 +100,7 @@ public class ClientLobbyController
         session.setAttribute("currentContract", contract);
 
 
-        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> disabledOptions = new HashSet<>();
         session.setAttribute("disabledOptions", disabledOptions);
 
         session.setAttribute("balance", contract.getBalance());
@@ -116,7 +116,7 @@ public class ClientLobbyController
         String optionName = request.getParameter("optionName");
 
         Contract contract = (Contract) session.getAttribute("currentContract");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         Set<Option> selectedOptions = contract.getSelectedOptions();
 
@@ -130,7 +130,7 @@ public class ClientLobbyController
             }
         }
 
-        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> disabledOptions = new HashSet<>();
         for (Option option : contract.getSelectedOptions())
         {
             disabledOptions.addAll(option.getLockedOptions());
@@ -150,7 +150,7 @@ public class ClientLobbyController
         String optionName = request.getParameter("optionName");
 
         Contract contract = (Contract) session.getAttribute("currentContract");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         for (Option option : contract.getTariff().getAvailableOptions())
         {
@@ -164,7 +164,7 @@ public class ClientLobbyController
         }
 
 
-        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> disabledOptions = new HashSet<>();
         for (Option option : contract.getSelectedOptions())
         {
             disabledOptions.addAll(option.getLockedOptions());
@@ -182,7 +182,7 @@ public class ClientLobbyController
         HttpSession session = request.getSession();
 
         Contract contract = (Contract) session.getAttribute("currentContract");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         Set<User> blockers = contract.getLockedByUsers();
         User user = (User) session.getAttribute("user");
@@ -201,7 +201,7 @@ public class ClientLobbyController
         HttpSession session = request.getSession();
 
         Contract contract = (Contract) session.getAttribute("currentContract");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         Set<User> blockers = contract.getLockedByUsers();
         User user = (User) session.getAttribute("user");
@@ -220,8 +220,8 @@ public class ClientLobbyController
     {
         HttpSession session = request.getSession();
 
-        List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
-        List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+        Set<Contract> contracts = (Set<Contract>) session.getAttribute("contracts");
+        Set<String> actionsHistory = (Set<String>) session.getAttribute("actionsHistory");
 
         for (Contract contract : contracts)
         {
@@ -237,9 +237,9 @@ public class ClientLobbyController
     {
         HttpSession session = request.getSession();
 
-        
+
         User user = (User) session.getAttribute("user");
-        List<Contract> contracts = contractService.getUserContracts(user);
+        Set<Contract> contracts = contractService.getUserContracts(user);
         session.setAttribute("contracts", contracts);
 
         Contract currentContract = null;
@@ -260,7 +260,7 @@ public class ClientLobbyController
         session.setAttribute("options", currentTariff.getAvailableOptions());
 
 
-        List<Option> disabledOptions = new LinkedList<>();
+        Set<Option> disabledOptions = new HashSet<>();
         Set<Option> selectedOptions = currentContract.getSelectedOptions();
         for (Option option : selectedOptions)
         {
@@ -274,7 +274,7 @@ public class ClientLobbyController
         session.setAttribute("disabledOptions", disabledOptions);
 
 
-        List<String> actionsHistory = new LinkedList<>();
+        Set<String> actionsHistory = new HashSet<>();
         session.setAttribute("actionsHistory", actionsHistory);
 
         session.setAttribute("balance", currentContract.getBalance());

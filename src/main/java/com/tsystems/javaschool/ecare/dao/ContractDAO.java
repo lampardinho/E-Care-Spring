@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository("contractDao")
 public class ContractDAO implements IAbstractDAO<Contract>
@@ -42,16 +43,16 @@ public class ContractDAO implements IAbstractDAO<Contract>
     }
 
     @Override
-    public List<Contract> getAll()
+    public Set<Contract> getAll()
     {
-        return em.createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
+        return new HashSet<>(em.createNamedQuery("Contract.getAllContracts", Contract.class).getResultList());
     }
 
-    public List<Contract> getAllContractsForClient(int id)
+    public Set<Contract> getAllContractsForClient(int id)
     {
         Query query = em.createNamedQuery("Contract.getAllContractsForClient", Contract.class);
         query.setParameter("id", id);
-        return query.getResultList();
+        return new HashSet<>(query.getResultList());
     }
 
     @Override
