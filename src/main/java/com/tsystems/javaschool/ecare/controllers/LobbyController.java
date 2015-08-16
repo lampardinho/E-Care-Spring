@@ -63,9 +63,9 @@ public class LobbyController
     {
         HttpSession session = request.getSession();
         
-        //String name = principal.getName();
+        String name = authentication.getName();
 
-        User user = userService.findClient("1lampard@mail.ru", "qwerty");
+        User user = userService.findClient(name);
         session.setAttribute("user", user);
 
         String role = null;
@@ -76,7 +76,7 @@ public class LobbyController
         if (role.equals("ROLE_ADMIN"))
         {
             initAdmin(request);
-            return "admin_clients";
+            return "admin_lobby";
         }
         else
         {
@@ -90,41 +90,38 @@ public class LobbyController
     {
         HttpSession session = request.getSession();
 
-        try
+        Set<User> users = userService.getAllClients();
+        session.setAttribute("users", users);
+
+        Set<Contract> contracts = contractService.getAllContracts();
+        session.setAttribute("contracts", contracts);
+
+        Set<Tariff> tariffs = tariffService.getAllTariffs();
+        session.setAttribute("tariffs", tariffs);
+
+        Set<Option> options = optionService.getAllOptions();
+        session.setAttribute("options", options);
+
+        Set<User> lockedUsers = new HashSet<>();
+        for (User user : users)
         {
-            Set<User> users = userService.getAllClients();
-            session.setAttribute("users", users);
-
-            Set<Contract> contracts = contractService.getAllContracts();
-            session.setAttribute("contracts", contracts);
-
-            Set<Tariff> tariffs = tariffService.getAllTariffs();
-            session.setAttribute("tariffs", tariffs);
-
-            Set<Option> options = optionService.getAllOptions();
-            session.setAttribute("options", options);
-
-            List<User> lockedUsers = new LinkedList<>();
-            for (User user : users)
+            boolean isUserLocked = true;
+            Set<Contract> userContracts = contractService.getUserContracts(user);
+            for (Contract contract : userContracts)
             {
-                boolean isUserLocked = true;
-                Set<Contract> userContracts = contractService.getUserContracts(user);
-                for (Contract contract : userContracts)
+                if (contract.getLockedByUsers().isEmpty())
                 {
-                    if (contract.getLockedByUsers().isEmpty())
-                    {
-                        isUserLocked = false;
-                        break;
-                    }
+                    isUserLocked = false;
+                    break;
                 }
-                if (isUserLocked && !userContracts.isEmpty())
-                    lockedUsers.add(user);
             }
-            session.setAttribute("lockedUsers", lockedUsers);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+            if (isUserLocked && !userContracts.isEmpty())
+                lockedUsers.add(user);
         }
+        session.setAttribute("lockedUsers", lockedUsers);
+
+
+
     }
 
 
@@ -153,7 +150,8 @@ public class LobbyController
             session.setAttribute("options", currentTariff.getAvailableOptions());
 
 
-            List<Option> disabledOptions = new LinkedList<>();
+            Set<Option> disabledOptions = new HashSet<>();
+            Set<Option> cantDisableOptions = new HashSet<>();
             Set<Option> selectedOptions = currentContract.getSelectedOptions();
             for (Option option : selectedOptions)
             {
@@ -163,8 +161,20 @@ public class LobbyController
                     if (disabledOptions.contains(lockedOption)) continue;
                     disabledOptions.add(lockedOption);
                 }
+                cantDisableOptions.addAll(option.getNeededOptions());
             }
+
+            for (Option option : currentTariff.getAvailableOptions())
+            {
+                for (Option neededOption: option.getNeededOptions())
+                {
+                    if (!selectedOptions.contains(neededOption))
+                        disabledOptions.add(option);
+                }
+            }
+
             session.setAttribute("disabledOptions", disabledOptions);
+            session.setAttribute("cantDisableOptions", cantDisableOptions);
 
 
             List<String> actionsHistory = new LinkedList<>();

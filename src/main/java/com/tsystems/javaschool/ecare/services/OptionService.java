@@ -123,6 +123,23 @@ public class OptionService
 
     }
 
+
+    @Transactional
+    public Option getOptionByName(String name)
+    {
+        logger.info("Get option from DB.");
+        Option option = opDao.findOptionByTitle(name);
+        //If DAO returns null method will throws an ECareException
+        if (option == null)
+        {
+            logger.error("Failed to get option from DB.");
+        }
+        logger.info("option obtained from DB.");
+        // Else method returns list of option entities
+        return option;
+
+    }
+
     /**
      * This method implements receiving of all options for tariff from the database.
      *

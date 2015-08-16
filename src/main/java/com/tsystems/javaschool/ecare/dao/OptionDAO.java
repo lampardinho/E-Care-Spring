@@ -1,7 +1,6 @@
 package com.tsystems.javaschool.ecare.dao;
 
 
-import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;
 import org.springframework.stereotype.Repository;
 
@@ -30,9 +29,9 @@ public class OptionDAO implements IAbstractDAO<Option>
         return em.find(Option.class, id);
     }
 
-    public Option findOptionByTitleAndTariffId(String title, long id)
+    public Option findOptionByTitle(String title)
     {
-        Query query = em.createNamedQuery("Option.findOptionByTitleAndTariffId", Option.class);
+        Query query = em.createNamedQuery("Option.findOptionByTitle", Option.class);
         query.setParameter("title", title);
         //query.setParameter("id", id);
         return (Option) query.getSingleResult();

@@ -81,19 +81,18 @@ public class UserService
      * the database.
      *
      * @param login    client login for search that client in the database.
-     * @param password client password for search that client in the database.
      * @return found client entity.
      *
      */
     @Transactional
-    public User findClient(String login, String password)
+    public User findClient(String login)
     {
-        logger.info("Find client with login: " + login + " and password:" + password + " in DB.");
+        logger.info("Find client with login: " + login + " in DB.");
         User cl = null;
         try
         {
             // Searching of client in the database by DAO method.
-            cl = clDao.findUserByLoginAndPassword(login, password);
+            cl = clDao.findUserByLogin(login);
             // If client does not exist in database, block try catches the NoResultException and
             // throws an ECareException.
         } catch (NoResultException nrx)

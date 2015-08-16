@@ -177,6 +177,9 @@
 							<tbody>
 								<c:forEach var="option" items="${options}" varStatus="myIndex">
 									<c:choose>
+										<c:when test="${cantDisableOptions.contains(option)}">
+											<tr class="success cantDisable">
+										</c:when>
 										<c:when test="${currentContract.selectedOptions.contains(option)}">
 											<tr class="success">
 										</c:when>

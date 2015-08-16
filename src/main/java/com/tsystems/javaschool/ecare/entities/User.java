@@ -3,6 +3,9 @@ package com.tsystems.javaschool.ecare.entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -18,8 +21,8 @@ import java.util.Set;
                 @NamedQuery(name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
                 @NamedQuery(name = "User.findUserByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
                 @NamedQuery(name = "User.findUsersByTariff", query = "SELECT distinct c.user FROM Contract c WHERE c.tariff.name = :tariff"),
-                @NamedQuery(name = "User.deleteAllUsers", query = "DELETE FROM User WHERE isAdmin = 0"),
-                @NamedQuery(name = "User.size", query = "SELECT count(c) FROM User c WHERE c.isAdmin = 0")
+                @NamedQuery(name = "User.deleteAllUsers", query = "DELETE FROM User"),
+                @NamedQuery(name = "User.size", query = "SELECT count(c) FROM User c")
         })
 public class User implements Serializable
 {
@@ -57,9 +60,9 @@ public class User implements Serializable
     @NotNull
     private String password;
 
-    @Column(name = "is_admin")
-    @NotNull
-    private byte isAdmin;
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
+    private Role role;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "contract_locking",
@@ -74,7 +77,7 @@ public class User implements Serializable
 
     public User(String name, String surname, Date birthDate,
                 String passportData, String address, String email,
-                String password, byte isAdmin)
+                String password, Role role)
     {
         this.name = name;
         this.surname = surname;
@@ -83,7 +86,7 @@ public class User implements Serializable
         this.address = address;
         this.email = email;
         this.password = password;
-        this.isAdmin = isAdmin;
+        this.role = role;
     }
 
     public int getUserId()
@@ -116,9 +119,11 @@ public class User implements Serializable
         this.surname = surname;
     }
 
-    public Date getBirthDate()
+    public String getBirthDate()
     {
-        return birthDate;
+        DateFormat outputFormatter = new SimpleDateFormat("MM/dd/yyyy");
+        String output = outputFormatter.format(birthDate); // Output : 01/20/2012
+        return output;
     }
 
     public void setBirthDate(Date birthDate)
@@ -166,14 +171,14 @@ public class User implements Serializable
         this.password = password;
     }
 
-    public boolean getIsAdmin()
+    public Role getRole()
     {
-        return isAdmin != 0;
+        return role;
     }
 
-    public void setIsAdmin(boolean isAdmin)
+    public void setRole(Role role)
     {
-        this.isAdmin = (isAdmin) ? (byte) 1 : 0;
+        this.role = role;
     }
 
     public Set<Contract> getLockedContracts()
@@ -194,7 +199,7 @@ public class User implements Serializable
 
         User that = (User) o;
 
-        if (isAdmin != that.isAdmin) return false;
+        if (role != that.role) return false;
         if (userId != that.userId) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (birthDate != null ? !birthDate.equals(that.birthDate) : that.birthDate != null) return false;
@@ -218,7 +223,7 @@ public class User implements Serializable
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (int) isAdmin;
+        result = 31 * result + role.hashCode();
         return result;
     }
 

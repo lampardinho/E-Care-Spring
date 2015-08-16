@@ -3,6 +3,7 @@ package com.tsystems.javaschool.ecare.controllers.rest;
 
 import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
+import com.tsystems.javaschool.ecare.rest.UserInfo;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,13 @@ public class WebServiceController
     public Set<String> getUsers(@RequestParam(value="tariff") String tariff)
     {
         Set<User> users = userService.getUsersByTariff(tariff);
-        Set<String> names = new HashSet<>();
+        Set<String> infos = new HashSet<>();
         for (Iterator<User> it = users.iterator(); it.hasNext(); )
         {
-            names.add(it.next().getName());
+            User user = it.next();
+            //infos.add(new UserInfo(user.getName(), user.getSurname(), user.getAddress(), user.getEmail()));
+            infos.add(user.getName() + " " + user.getSurname() + " " + user.getAddress() + " " + user.getEmail());
         }
-        return names;
+        return infos;
     }
 }

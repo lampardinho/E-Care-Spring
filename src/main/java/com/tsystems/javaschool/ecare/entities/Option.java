@@ -13,7 +13,7 @@ import java.util.Set;
 @NamedQueries(
         {
                 @NamedQuery(name = "Option.getAllOptions", query = "SELECT o FROM Option o"),
-                @NamedQuery(name = "Option.findOptionByTitleAndTariffId", query = "SELECT o FROM Option o WHERE o.name = :title"),
+                @NamedQuery(name = "Option.findOptionByTitle", query = "SELECT o FROM Option o WHERE o.name = :title"),
                 @NamedQuery(name = "Option.getAllOptionsForTariff", query = "SELECT o FROM Option o"),
                 @NamedQuery(name = "Option.deleteAllOptions", query = "DELETE FROM Option"),
                 @NamedQuery(name = "Option.deleteAllOptionsForTariff", query = "DELETE FROM Option"),
@@ -45,6 +45,13 @@ public class Option implements Serializable
             inverseJoinColumns = @JoinColumn(name = "locked_option_id"))
     @NotNull
     private Set<Option> lockedOptions;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "option_dependency",
+            joinColumns = @JoinColumn(name = "option_id"),
+            inverseJoinColumns = @JoinColumn(name = "needed_option_id"))
+    @NotNull
+    private Set<Option> neededOptions;
 
 
     public Option()
@@ -135,4 +142,13 @@ public class Option implements Serializable
     }
 
 
+    public Set<Option> getNeededOptions()
+    {
+        return neededOptions;
+    }
+
+    public void setNeededOptions(Set<Option> neededOptions)
+    {
+        this.neededOptions = neededOptions;
+    }
 }

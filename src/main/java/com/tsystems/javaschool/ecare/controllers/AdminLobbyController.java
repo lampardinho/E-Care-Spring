@@ -1,9 +1,6 @@
 package com.tsystems.javaschool.ecare.controllers;
 
-import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.entities.User;
+import com.tsystems.javaschool.ecare.entities.*;
 import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.OptionService;
 import com.tsystems.javaschool.ecare.services.TariffService;
@@ -39,29 +36,7 @@ public class AdminLobbyController
     @Autowired
     OptionService optionService;
 
-    @RequestMapping(value = "/admin_clients")
-    protected String adminClients(HttpServletRequest request)
-    {
-        return "admin_clients";
-    }
 
-    @RequestMapping(value = "/admin_contracts")
-    protected String adminContracts(HttpServletRequest request)
-    {
-        return "admin_contracts";
-    }
-
-    @RequestMapping(value = "/admin_tariffs")
-    protected String adminTariffs(HttpServletRequest request)
-    {
-        return "admin_tariffs";
-    }
-
-    @RequestMapping(value = "/admin_options")
-    protected String adminOptions(HttpServletRequest request)
-    {
-        return "admin_options";
-    }
 
     @RequestMapping(value = "/lock_user", method = RequestMethod.GET)
     protected String lockUser(HttpServletRequest request)
@@ -119,12 +94,12 @@ public class AdminLobbyController
             e.printStackTrace();
         }
 
-        byte byteAdmin;
-        if (isAdmin.equals("on")) byteAdmin = 1;
-        else byteAdmin = 0;
+        String role;
+        if (isAdmin.equals("on")) role = "ROLE_ADMIN";
+        else role = "ROLE_USER";
 
         User newUser = new User(firstName, lastName, date, passportData, address,
-                email, password, byteAdmin);
+                email, password, new Role(role));
 
         try
         {
@@ -240,27 +215,45 @@ public class AdminLobbyController
     }
 
 
-    @RequestMapping(value = "/get_avail_options", method = RequestMethod.GET)
+    @RequestMapping(value = "/contract_edit_options", method = RequestMethod.GET)
     protected String getAvailableOptions(HttpServletRequest request)
     {
         HttpSession session = request.getSession();
-        String tariffName = request.getParameter("tariffName");
+        String phoneNumber = request.getParameter("phoneNumber");
 
-        Set<Tariff> tariffs = null;
-        try
+        Contract contract = contractService.getContractByPhoneNumber(Integer.parseInt(phoneNumber));
+
+
+        Set<Option> disabledOptions = new HashSet<>();
+        Set<Option> selectedOptions = contract.getSelectedOptions();
+        Set<Option> availableOptions = contract.getTariff().getAvailableOptions();
+        Set<Option> cantDisableOptions = new HashSet<>();
+
+        for (Option option : selectedOptions)
         {
-            tariffs = tariffService.getAllTariffs();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        for (Tariff tariff : tariffs)
-        {
-            if (tariff.getName().equals(tariffName))
+            Collection<Option> lockedOptions = option.getLockedOptions();
+            for (Option lockedOption : lockedOptions)
             {
-                session.setAttribute("availableOptions", tariff.getAvailableOptions());
+                if (disabledOptions.contains(lockedOption)) continue;
+                disabledOptions.add(lockedOption);
+            }
+            cantDisableOptions.addAll(option.getNeededOptions());
+        }
+
+        for (Option option : availableOptions)
+        {
+            for (Option neededOption: option.getNeededOptions())
+            {
+                if (!selectedOptions.contains(neededOption))
+                    disabledOptions.add(option);
             }
         }
+
+        session.setAttribute("availableOptions", availableOptions);
+        session.setAttribute("contract_cantDisableOptions", cantDisableOptions);
+        session.setAttribute("contract_selectedOptions", selectedOptions);
+        session.setAttribute("contract_disabledOptions", disabledOptions);
+
         return "admin_lobby";
     }
 
@@ -295,12 +288,74 @@ public class AdminLobbyController
     }
 
 
+    @RequestMapping(value = "/sel_option", method = RequestMethod.GET)
+    protected String selectOption(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        String phoneNumber = request.getParameter("phoneNumber");
+        String selectedOption = request.getParameter("optionName");
+
+        Contract contract = contractService.getContractByPhoneNumber(Integer.parseInt(phoneNumber));
+
+        Option changedOption = optionService.getOptionByName(selectedOption);
+
+        Set<Option> disabledOptions = new HashSet<>();
+        Set<Option> selectedOptions = (Set<Option>) session.getAttribute("contract_selectedOptions");
+        Set<Option> availableOptions = contract.getTariff().getAvailableOptions();
+        Set<Option> cantDisableOptions = new HashSet<>();
+
+        if (selectedOptions.contains(changedOption))
+        {
+            selectedOptions.remove(changedOption);
+        }
+        else
+        {
+            selectedOptions.add(changedOption);
+        }
+
+
+        for (Option option : selectedOptions)
+        {
+            Collection<Option> lockedOptions = option.getLockedOptions();
+            for (Option lockedOption : lockedOptions)
+            {
+                if (disabledOptions.contains(lockedOption)) continue;
+                disabledOptions.add(lockedOption);
+            }
+            cantDisableOptions.addAll(option.getNeededOptions());
+        }
+
+        for (Option option : availableOptions)
+        {
+            for (Option neededOption: option.getNeededOptions())
+            {
+                if (!selectedOptions.contains(neededOption))
+                    disabledOptions.add(option);
+            }
+        }
+
+        session.setAttribute("availableOptions", availableOptions);
+        session.setAttribute("contract_cantDisableOptions", cantDisableOptions);
+        session.setAttribute("contract_selectedOptions", selectedOptions);
+        session.setAttribute("contract_disabledOptions", disabledOptions);
+
+        return "admin_lobby";
+    }
+
+
     @RequestMapping(value = "/save_sel_options", method = RequestMethod.GET)
     protected String saveSelectedOptions(HttpServletRequest request)
     {
         HttpSession session = request.getSession();
-        String options = request.getParameter("options");
-        System.out.println(options);
+        String phoneNumber = request.getParameter("phoneNumber");
+
+        Contract contract = contractService.getContractByPhoneNumber(Integer.parseInt(phoneNumber));
+        Set<Option> selectedOptions = (Set<Option>) session.getAttribute("contract_selectedOptions");
+        contract.setSelectedOptions(selectedOptions);
+        contractService.saveOrUpdateContract(contract);
+
+        Set<Contract> contracts = contractService.getAllContracts();
+        session.setAttribute("contracts", contracts);
 
         return "admin_lobby";
     }
@@ -453,39 +508,23 @@ public class AdminLobbyController
 
 
 
-    @RequestMapping(value = "/edit_option", method = RequestMethod.GET)
-    protected String editOption(HttpServletRequest request)
+    @RequestMapping(value = "/edit_locked_options", method = RequestMethod.GET)
+    protected String editLockedOptions(HttpServletRequest request)
     {
         HttpSession session = request.getSession();
         String optionName = request.getParameter("optionName");
-        String[] optionNames = request.getParameterValues("options[]");
         Set<Option> options = (Set<Option>) session.getAttribute("options");
 
-        Set<Option> lockedOptions = new HashSet<>();
-        for (String lockedName : optionNames)
+        for (Option option : options)
         {
-            for (Option option : options)
+            if (option.getName().equals(optionName))
             {
-                if (option.getName().equals(lockedName))
-                    lockedOptions.add(option);
+                Set<Option> disabledOptions = option.getNeededOptions();
+
+                session.setAttribute("option_disabledOptions", disabledOptions);
+                session.setAttribute("option_editOption", option);
+                break;
             }
-
-        }
-
-        try
-        {
-            for (Option option : options)
-            {
-                if (option.getName().equals(optionName))
-                {
-                    option.setLockedOptions(lockedOptions);
-                    optionService.saveOrUpdateOption(option);
-                }
-            }
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
 
         return "admin_lobby";
@@ -493,4 +532,98 @@ public class AdminLobbyController
 
 
 
+    @RequestMapping(value = "/save_edit_locked_options", method = RequestMethod.GET)
+    protected String saveEditLockedOptions(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        String optionName = request.getParameter("optionName");
+        String[] optionNames = request.getParameterValues("options[]");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
+
+        Set<Option> lockedOptions = new HashSet<>();
+
+        if (optionNames != null)
+        {
+            for (String lockedName : optionNames)
+            {
+                for (Option option : options)
+                {
+                    if (option.getName().equals(lockedName))
+                        lockedOptions.add(option);
+                }
+
+            }
+        }
+
+        for (Option option : options)
+        {
+            if (option.getName().equals(optionName))
+            {
+                option.setLockedOptions(lockedOptions);
+                optionService.saveOrUpdateOption(option);
+            }
+        }
+
+        return "admin_lobby";
+    }
+
+
+    @RequestMapping(value = "/edit_needed_options", method = RequestMethod.GET)
+    protected String editNeededOptions(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        String optionName = request.getParameter("optionName");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
+
+        for (Option option : options)
+        {
+            if (option.getName().equals(optionName))
+            {
+                Set<Option> disabledOptions = option.getLockedOptions();
+
+                session.setAttribute("option_disabledOptions", disabledOptions);
+                session.setAttribute("option_editOption", option);
+                break;
+            }
+        }
+
+        return "admin_lobby";
+    }
+
+
+
+    @RequestMapping(value = "/save_edit_needed_options", method = RequestMethod.GET)
+    protected String saveEditNeededOptions(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        String optionName = request.getParameter("optionName");
+        String[] optionNames = request.getParameterValues("options[]");
+        Set<Option> options = (Set<Option>) session.getAttribute("options");
+
+        Set<Option> neededOptions = new HashSet<>();
+
+        if (optionNames != null)
+        {
+            for (String neededName : optionNames)
+            {
+                for (Option option : options)
+                {
+                    if (option.getName().equals(neededName))
+                        neededOptions.add(option);
+                }
+
+            }
+        }
+
+        for (Option option : options)
+        {
+            if (option.getName().equals(optionName))
+            {
+                option.setNeededOptions(neededOptions);
+                optionService.saveOrUpdateOption(option);
+            }
+        }
+
+        return "admin_lobby";
+    }
 }

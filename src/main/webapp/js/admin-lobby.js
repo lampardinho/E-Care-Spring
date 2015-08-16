@@ -3,8 +3,11 @@
  */
 
 
-
 $('#searchUser').click(function() {
+
+    if ($('#userProfile').hasClass('in')) return;
+    $('#userProfile').modal('hide');
+
     var phoneNumber = $('#searchPhoneNumber').val();
 
     $.get('admin_lobby/find_user',{phoneNumber:phoneNumber},function(responseText) {
@@ -13,13 +16,18 @@ $('#searchUser').click(function() {
         $('#userProfile').replaceWith(found);
 
         $('#userProfile').modal('show');
+
     });
 });
 
 
 $('#createUser').click(function()
 {
+
+    if (!$('#addUser').hasClass('in')) return;
+
     $('#addUser').modal('hide');
+
 
     var firstName = $('#user_firstName').val();
     var lastName = $('#user_lastName').val();
@@ -47,45 +55,6 @@ $('#createUser').click(function()
 });
 
 
-$('.editOptionsButton').click(function() {
-    var row = $(this).parent().parent();
-    var tariffName = row.children('td.tariff-name').text();
-    $.get('admin_lobby/get_avail_options',{tariffName:tariffName},function(responseText) {
-        var elements = $(responseText);
-        var found = $('#editOptions', elements);
-        $('#editOptions').replaceWith(found);
-
-        var found1 = $('#myScripts', elements);
-        $('#myScripts').replaceWith(found1);
-
-        $('#editOptions').modal('show');
-    });
-});
-
-
-
-$('#createContract').click(function()
-{
-    $('#newContract').modal('hide');
-
-    var owner = $('#owner').val();
-    var phoneNumber = $('#phoneNumber').val();
-    var balance = $('#balance').val();
-    var tariff = $('#tariff').val();
-
-    $.get('admin_lobby/add_contract',{
-        owner:owner,
-        phoneNumber:phoneNumber,
-        balance:balance,
-        tariff:tariff},
-        function(responseText) {
-            var elements = $(responseText);
-            var found = $('#content', elements);
-            $('#content').replaceWith(found);
-            $("#clients").removeClass("active");
-            $("#contracts").addClass("active");
-        });
-});
 
 
 $('.unlockButton').click(function() {
@@ -96,7 +65,12 @@ $('.unlockButton').click(function() {
     }
     else
     {
+
+        if (!$('#userProfile').hasClass('in')) return;
+
         $('#userProfile').modal('hide');
+
+
         email = $('#foundUserEmail').text();
     }
     $.get('admin_lobby/unlock_user',{email:email},function(responseText) {
@@ -115,7 +89,12 @@ $('.lockButton').click(function() {
     }
     else
     {
+
+        if (!$('#userProfile').hasClass('in')) return;
+
         $('#userProfile').modal('hide');
+
+
         email = $('#foundUserEmail').text();
     }
     $.get('admin_lobby/lock_user',{email:email},function(responseText) {
@@ -126,34 +105,129 @@ $('.lockButton').click(function() {
 });
 
 
-$('#saveEditOptions').click(function() {
-    var data = { options : []};
-    $('input[name="selectedOptions"]:checked').each(function() {
-        data['options'].push($(this).val());
-    });
-    alert(data)
-    $.get('admin_lobby/save_sel_options',data,function(responseText) {
+
+
+
+
+
+
+
+
+
+$('#createContract').click(function()
+{
+
+    if (!$('#newContract').hasClass('in')) return;
+
+    $('#newContract').modal('hide');
+
+
+    var owner = $('#owner').val();
+    var phoneNumber = $('#phoneNumber').val();
+    var balance = $('#balance').val();
+    var tariff = $('#tariff').val();
+
+    $.get('admin_lobby/add_contract',{
+            owner:owner,
+            phoneNumber:phoneNumber,
+            balance:balance,
+            tariff:tariff},
+        function(responseText) {
+            var elements = $(responseText);
+            var found = $('#content', elements);
+            $('#content').replaceWith(found);
+            $("#clients").removeClass("active");
+            $("#contracts").addClass("active");
+        });
+});
+
+
+
+var selectedPhoneNumber;
+
+$('.editOptionsButton').click(function() {
+
+    if ($('#editOptions').hasClass('in')) return;
+    $('#editOptions').modal('hide');
+
+    var row = $(this).parent().parent();
+    selectedPhoneNumber = row.children('td.contract_phone').text();
+    $.get('admin_lobby/contract_edit_options',{phoneNumber:selectedPhoneNumber},function(responseText) {
+        var elements = $(responseText);
+        var found = $('#editOptions', elements);
+        $('#editOptions').replaceWith(found);
+
+        var found1 = $('#myScripts', elements);
+        $('#myScripts').replaceWith(found1);
+
+        $('#editOptions').modal('show');
 
     });
+});
+
+
+
+$('#saveEditOptions').click(function() {
+
+    if (!$('#editOptions').hasClass('in')) return;
+
+    $('#editOptions').modal('hide');
+
+
+    $.get('admin_lobby/save_sel_options',{phoneNumber: selectedPhoneNumber},function(responseText) {
+        var elements = $(responseText);
+        var found = $('#content', elements);
+        $('#content').replaceWith(found);
+        $("#clients").removeClass("active");
+        $("#contracts").addClass("active");
+    });
+});
+
+$('#closeEditOptions').click(function() {
+
+    if (!$('#editOptions').hasClass('in')) return;
+
+    $('#editOptions').modal('hide');
+
 });
 
 
 
 $('input[name="selectedOptions"]').change(function () {
-    alert('changed');
+
+    var optionName = $(this).val();
+    $.get('admin_lobby/sel_option',{phoneNumber: selectedPhoneNumber, optionName:optionName},function(responseText) {
+        var elements = $(responseText);
+        var found = $('#avail_options_div', elements);
+        $('#avail_options_div').replaceWith(found);
+
+        var found1 = $('#myScripts', elements);
+        $('#myScripts').replaceWith(found1);
+    });
 });
+
+
 
 var changeTariffPhone;
 
 $('.changeTariffButton').click(function() {
+
+
     var row = $(this).parent().parent();
     changeTariffPhone = row.children('td.contract_phone').text();
     //alert(changeTariffPhone)
+
+    $('#changeTariff').modal('show');
+
 });
 
 
 $('#saveChangeTariff').click(function() {
+
+    if (!$('#changeTariff').hasClass('in')) return;
+
     $('#changeTariff').modal('hide');
+
 
     var tariff = $("#avail_tariffs").val();
 
@@ -167,6 +241,15 @@ $('#saveChangeTariff').click(function() {
 });
 
 
+$('#closeChangeTariff').click(function() {
+
+    if (!$('#changeTariff').hasClass('in')) return;
+
+    $('#changeTariff').modal('hide');
+
+});
+
+
 
 
 
@@ -176,7 +259,11 @@ $('#saveChangeTariff').click(function() {
 
 
 $('#createTariff').click(function() {
+
+    if (!$('#newTariff').hasClass('in')) return;
+
     $('#newTariff').modal('hide');
+
 
     var tariffName = $('#tariffName').val();
     var tariffPrice = $('#tariffPrice').val();
@@ -203,13 +290,18 @@ $('#createTariff').click(function() {
 
 var editTariffName;
 
-$('#tariffs tbody > tr').click(function() {
-    editTariffName = $(this).children('td.tariff_name').text();
-    $('#editTariff').modal('show');
+$('.editTariffButton').click(function() {
+    var row = $(this).parent().parent();
+    editTariffName = row.children('td.tariff_name').text();
+    //alert(editTariffName)
 });
 
 $('#saveEditTariff').click(function() {
+
+    if (!$('#editTariff').hasClass('in')) return;
+
     $('#editTariff').modal('hide');
+
 
     var options = [];
     $('input[name="edit_avail_options"]:checked').each(function () {
@@ -232,7 +324,11 @@ $('#saveEditTariff').click(function() {
 
 
 $('#deleteTariff').click(function() {
+
+    if (!$('#editTariff').hasClass('in')) return;
+
     $('#editTariff').modal('hide');
+
 
     $.get('admin_lobby/delete_tariff',{
             tariffName: editTariffName},
@@ -253,21 +349,38 @@ $('#deleteTariff').click(function() {
 
 var editOptionName
 
-$('#options tbody > tr').click(function() {
-    editOptionName = $(this).children('td.option_name').text();
-    $('#editOption').modal('show');
+$('.editLockedOptionsButton').click(function() {
+    var row = $(this).parent().parent();
+    editOptionName = row.children('td.option_name').text();
+
+    $.get('admin_lobby/edit_locked_options',{
+            optionName: editOptionName},
+        function(responseText) {
+            var elements = $(responseText);
+            var found = $('#locked_options_div', elements);
+            $('#locked_options_div').replaceWith(found);
+
+            var found1 = $('#myScripts', elements);
+            $('#myScripts').replaceWith(found1);
+
+            $("#clients").removeClass("active");
+            $("#options").addClass("active");
+
+            $('#editLockedOptions').modal('show');
+        }
+    );
 });
 
 
-$('#editOptionButton').click(function() {
-    $('#editOption').modal('hide');
+$('#saveEditLockedOptionButton').click(function() {
+    $('#editLockedOptions').modal('hide');
 
     var options = [];
     $('input[name="edit_lock_options"]:checked').each(function () {
         options.push($(this).val());
     });
 
-    $.get('admin_lobby/edit_option',{
+    $.get('admin_lobby/save_edit_locked_options',{
             optionName: editOptionName,
             options:options},
         function(responseText) {
@@ -283,8 +396,52 @@ $('#editOptionButton').click(function() {
 
 
 
-$('#logout').click(function() {
-    $.get('admin_lobby/sign_out',{},function(responseText) {
-        window.location = "../WEB-INF/jsp/login.jsp";
+$('.editNeededOptionsButton').click(function() {
+    var row = $(this).parent().parent();
+    editOptionName = row.children('td.option_name').text();
+
+    $.get('admin_lobby/edit_needed_options',{
+            optionName: editOptionName},
+        function(responseText) {
+            var elements = $(responseText);
+            var found = $('#needed_options_div', elements);
+            $('#needed_options_div').replaceWith(found);
+
+            var found1 = $('#myScripts', elements);
+            $('#myScripts').replaceWith(found1);
+
+            $("#clients").removeClass("active");
+            $("#options").addClass("active");
+
+            $('#editNeededOptions').modal('show');
+        }
+    );
+});
+
+
+$('#saveEditNeededOptionButton').click(function() {
+    $('#editNeededOptions').modal('hide');
+
+    var options = [];
+    $('input[name="edit_need_options"]:checked').each(function () {
+        options.push($(this).val());
     });
+
+    $.get('admin_lobby/save_edit_needed_options',{
+            optionName: editOptionName,
+            options:options},
+        function(responseText) {
+            var elements = $(responseText);
+            var found = $('#content', elements);
+            $('#content').replaceWith(found);
+            $("#clients").removeClass("active");
+            $("#options").addClass("active");
+        }
+    );
+});
+
+
+
+$('#logout').click(function() {
+    location.href = 'sign_out';
 });

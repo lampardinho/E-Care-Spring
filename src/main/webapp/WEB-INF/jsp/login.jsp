@@ -42,12 +42,7 @@
 				<input type="text" name="j_username" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 				<label for="inputPassword" class="sr-only">Password</label>
 				<input type="password" name="j_password" id="inputPassword" class="form-control" placeholder="Password" required>
-				<%--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" value="isAdmin" name="isAdmin"> Admin
-					</label>
-				</div>
+
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 			</form>
 

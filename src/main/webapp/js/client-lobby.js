@@ -49,6 +49,12 @@ $('#options tbody > tr').click(function() {
             message: "You don't have enough money to add this option!"
         });
     }
+    else if (row.hasClass("cantDisable"))
+    {
+        BootstrapDialog.show({
+            message: "This option is needed for another option!"
+        });
+    }
     else if (row.hasClass("success"))
     {
         BootstrapDialog.confirm('You are going to disable this option, are you sure?', function(result){
