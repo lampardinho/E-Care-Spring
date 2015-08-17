@@ -101,7 +101,7 @@
 												<td>${user.passportData}</td>
 												<td>${user.address}</td>
 												<td class="user_email">${user.email}</td>
-												<td>${user.role.roleName}</td>
+												<td>${user.role}</td>
 												<td>
 													<c:choose>
 														<c:when test="${lockedUsers.contains(user)}">
@@ -156,7 +156,7 @@
 															<td><c:out value="${foundUser.birthDate}"/></td>
 															<td><c:out value="${foundUser.passportData}"/></td>
 															<td id="foundUserEmail"><c:out value="${foundUser.email}"/></td>
-															<td><c:out value="${foundUser.role.roleName}"/></td>
+															<td><c:out value="${foundUser.role}"/></td>
 														</tr>
 													</tbody>
 												</table>
@@ -586,7 +586,15 @@
 											</div>
 											<div class="modal-footer">
 												<button id="saveEditTariff" type="button" class="btn btn-success">Save changes</button>
-												<button id="deleteTariff" type="button" class="btn btn-danger">Delete tariff</button>
+												<%--<c:choose>
+													<c:when test="${isTariffUsed == true}">
+														<button id="deleteTariff" type="button" class="btn btn-danger disabled">Delete tariff</button>
+													</c:when>
+													<c:otherwise>
+														<button id="deleteTariff" type="button" class="btn btn-danger">Delete tariff</button>
+													</c:otherwise>
+												</c:choose>--%>
+
 												<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 											</div>
 										</div>

@@ -2,7 +2,6 @@ package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,18 +16,17 @@ import java.util.Set;
 @Service("optionService")
 public class OptionService
 {
+    /*Logger for option service operations*/
+    private static Logger logger = Logger.getLogger(OptionService.class);
+    /*Tariff service instance for some methods of working with that service*/
+    private final TariffService tariffService;
     /*SQL option implementations of DAO class*/
     private OptionDAO opDao;
 
-    /*Tariff service instance for some methods of working with that service*/
-    private final TariffService tariffService;
-
-    /*Logger for option service operations*/
-    private static Logger logger = Logger.getLogger(OptionService.class);
-
     /*Constructor of Client Service class*/
     @Autowired
-    public OptionService(OptionDAO opDAO, TariffService tariffService) {
+    public OptionService(OptionDAO opDAO, TariffService tariffService)
+    {
         this.opDao = opDAO;
         this.tariffService = tariffService;
     }
@@ -38,7 +36,6 @@ public class OptionService
      *
      * @param op option entity to be saved or updated.
      * @return saved or updated option entity.
-     *
      */
     @Transactional
     public Option saveOrUpdateOption(Option op)
@@ -61,7 +58,6 @@ public class OptionService
      *
      * @param id option id for search that option in the database.
      * @return loaded option entity.
-     *
      */
     @Transactional
     public Option loadOption(int id)
@@ -82,7 +78,6 @@ public class OptionService
      * This method implements deleting of option from the database.
      *
      * @param id option id for deleting that option from the database.
-     *
      */
     @Transactional
     public void deleteOption(int id)
@@ -105,7 +100,6 @@ public class OptionService
      * This method implements receiving of all options from the database.
      *
      * @return list of received options.
-     *
      */
     @Transactional
     public Set<Option> getAllOptions()
@@ -145,7 +139,6 @@ public class OptionService
      *
      * @param id contract id for searching of all options for this contract.
      * @return list of received options.
-     *
      */
     @Transactional
     public Set<Option> getAllOptionsForTariff(long id)

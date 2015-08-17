@@ -138,5 +138,5 @@ $('#discard').click(function() {
 
 
 $('#logout').click(function() {
-    location.href = 'sign_out';
+    location.href = 'j_spring_security_logout';
 });

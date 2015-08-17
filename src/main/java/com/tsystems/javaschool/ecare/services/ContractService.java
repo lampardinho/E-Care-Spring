@@ -3,7 +3,6 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.ContractDAO;
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.User;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,8 @@ import java.util.Set;
 @Service("contractService")
 public class ContractService
 {
-    /*SQL contract implementations of DAO class*/
-    private ContractDAO cnDao;
-
+    /*Logger for contract service operations*/
+    private static Logger logger = Logger.getLogger(ContractService.class);
     /*Client service instance for some methods of working with client amount in contract service*/
     private final UserService clientService;
 
@@ -30,13 +28,13 @@ public class ContractService
 
     /*Option service instance for some methods of working with option service*/
     private final OptionService optionService;
-
-    /*Logger for contract service operations*/
-    private static Logger logger = Logger.getLogger(ContractService.class);
+    /*SQL contract implementations of DAO class*/
+    private ContractDAO cnDao;
 
     /*Constructor of Contract Service class*/
     @Autowired
-    public ContractService(ContractDAO cnDAO, UserService clientService, OptionService optionService, TariffService tariffService) {
+    public ContractService(ContractDAO cnDAO, UserService clientService, OptionService optionService, TariffService tariffService)
+    {
         this.cnDao = cnDAO;
         this.clientService = clientService;
         this.optionService = optionService;
@@ -48,7 +46,6 @@ public class ContractService
      *
      * @param cn contract entity to be saved or updated.
      * @return saved or updated contract entity.
-     *
      */
     @Transactional
     public Contract saveOrUpdateContract(Contract cn)
@@ -68,7 +65,6 @@ public class ContractService
      *
      * @param id contract id for search that contract in the database.
      * @return loaded contract entity.
-     *
      */
     @Transactional
     public Contract loadContract(int id)
@@ -87,14 +83,14 @@ public class ContractService
      *
      * @param number contract number for search that contract in the database.
      * @return found contract entity.
-     *
      */
     @Transactional
     public Contract getContractByPhoneNumber(int number)
     {
         logger.info("Find contract by telephone number: " + number + " in DB.");
         Contract cn = null;
-        try {
+        try
+        {
             // Search of contract in the database by DAO method.
             cn = cnDao.findContractByNumber(number);
             // If contract does not exist in database, block try catches the NoResultException and
@@ -113,7 +109,6 @@ public class ContractService
      * This method implements deleting of contract from the database.
      *
      * @param id contract id for deleting that contract from the database.
-     *
      */
     @Transactional
     public void deleteContract(int id)
@@ -137,7 +132,6 @@ public class ContractService
      * This method implements receiving of all contracts from the database.
      *
      * @return list of received contracts.
-     *
      */
     @Transactional
     public Set<Contract> getAllContracts()
@@ -161,7 +155,6 @@ public class ContractService
      *
      * @param user client id for searching of all contracts for this client.
      * @return list of received contracts.
-     *
      */
     @Transactional
     public Set<Contract> getUserContracts(User user)

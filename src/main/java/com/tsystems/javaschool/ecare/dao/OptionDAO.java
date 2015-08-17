@@ -16,7 +16,7 @@ public class OptionDAO implements IAbstractDAO<Option>
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @Override
     public Option saveOrUpdate(Option op)
     {

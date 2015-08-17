@@ -12,6 +12,14 @@ public class UserInfo implements Serializable
     private String address;
     private String email;
 
+    public UserInfo(String name, String surname, String address, String email)
+    {
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.email = email;
+    }
+
     public String getName()
     {
         return name;
@@ -49,15 +57,6 @@ public class UserInfo implements Serializable
 
     public void setEmail(String email)
     {
-        this.email = email;
-    }
-
-
-    public UserInfo(String name, String surname, String address, String email)
-    {
-        this.name = name;
-        this.surname = surname;
-        this.address = address;
         this.email = email;
     }
 }

@@ -19,13 +19,13 @@ public class LobbyTest
   @Before
   public void setUp() throws Exception {
     driver = new FirefoxDriver();
-    baseUrl = "http://localhost:8085/";
+    baseUrl = "http://localhost:8085/fullstack";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
   @Test
   public void testClientOptions() throws Exception {
-		driver.get(baseUrl + "/login.jsp");
+		driver.get(baseUrl + "/login");
 
 		driver.findElement(By.id("inputEmail")).clear();
 		driver.findElement(By.id("inputEmail")).sendKeys("mashasyrkina@mail.ru");

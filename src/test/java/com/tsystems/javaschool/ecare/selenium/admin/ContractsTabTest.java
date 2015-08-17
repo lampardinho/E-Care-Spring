@@ -19,13 +19,13 @@ public class ContractsTabTest {
   @Before
   public void setUp() throws Exception {
     driver = new FirefoxDriver();
-    baseUrl = "http://localhost:8085/";
+    baseUrl = "http://localhost:8085/fullstack";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
   @Test
   public void testContractsTab() throws Exception {
-		driver.get(baseUrl + "/login.jsp");
+		driver.get(baseUrl + "/login");
 		driver.findElement(By.id("inputEmail")).clear();
 		driver.findElement(By.id("inputEmail")).sendKeys("1lampard@mail.ru");
 		driver.findElement(By.id("inputPassword")).clear();

@@ -4,9 +4,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -60,15 +60,18 @@ public class User implements Serializable
     @NotNull
     private String password;
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "role_id")
-    private Role role;
+    private Role role;*/
+    @Column(name = "role")
+    @NotNull
+    private String role;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "contract_locking",
             joinColumns = @JoinColumn(name = "locker_id"),
             inverseJoinColumns = @JoinColumn(name = "contract_id"))
-    @NotNull
+    //@NotNull
     private Set<Contract> lockedContracts;
 
     public User()
@@ -77,7 +80,7 @@ public class User implements Serializable
 
     public User(String name, String surname, Date birthDate,
                 String passportData, String address, String email,
-                String password, Role role)
+                String password, String role)
     {
         this.name = name;
         this.surname = surname;
@@ -87,6 +90,7 @@ public class User implements Serializable
         this.email = email;
         this.password = password;
         this.role = role;
+        lockedContracts = new HashSet<>();
     }
 
     public int getUserId()
@@ -171,12 +175,12 @@ public class User implements Serializable
         this.password = password;
     }
 
-    public Role getRole()
+    public String getRole()
     {
         return role;
     }
 
-    public void setRole(Role role)
+    public void setRole(String role)
     {
         this.role = role;
     }

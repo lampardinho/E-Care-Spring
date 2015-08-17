@@ -35,7 +35,7 @@ public class Tariff implements Serializable
     @JoinTable(name = "available_options",
             joinColumns = @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id"),
             inverseJoinColumns = @JoinColumn(name = "option_id", referencedColumnName = "option_id"))
-    @NotNull
+    //@NotNull
     private Set<Option> availableOptions;
 
     public Tariff()

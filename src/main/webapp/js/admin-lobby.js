@@ -347,7 +347,7 @@ $('#deleteTariff').click(function() {
 
 
 
-var editOptionName
+var editOptionName;
 
 $('.editLockedOptionsButton').click(function() {
     var row = $(this).parent().parent();
@@ -443,5 +443,5 @@ $('#saveEditNeededOptionButton').click(function() {
 
 
 $('#logout').click(function() {
-    location.href = 'sign_out';
+    location.href = 'j_spring_security_logout';
 });

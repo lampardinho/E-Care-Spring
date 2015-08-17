@@ -14,4 +14,13 @@
     </persistence-unit>
 
 
+    <!--<persistence-unit name="ecarePU-test" transaction-type="RESOURCE_LOCAL">
+        <class>com.tsystems.javaschool.ecare.entities.User</class>
+        <class>com.tsystems.javaschool.ecare.entities.Contract</class>
+        <class>com.tsystems.javaschool.ecare.entities.Option</class>
+        <class>com.tsystems.javaschool.ecare.entities.Tariff</class>
+        <class>com.tsystems.javaschool.ecare.entities.Role</class>
+    </persistence-unit>-->
+
+
 </persistence>

@@ -17,14 +17,14 @@ import java.util.Set;
 @Service("userService")
 public class UserService
 {
+    /*Logger for client service operations*/
+    private static Logger logger = Logger.getLogger(UserService.class);
     /*SQL client implementations of DAO class*/
     private UserDAO clDao;
 
-    /*Logger for client service operations*/
-    private static Logger logger = Logger.getLogger(UserService.class);
-
     @Autowired
-    public UserService(UserDAO clDAO) {
+    public UserService(UserDAO clDAO)
+    {
         this.clDao = clDAO;
     }
 
@@ -33,7 +33,6 @@ public class UserService
      *
      * @param cl client entity to be saved or updated.
      * @return saved or updated client entity.
-     *
      */
     @Transactional
     public User saveOrUpdateClient(User cl)
@@ -57,7 +56,6 @@ public class UserService
      *
      * @param id client id for search that client in the database.
      * @return loaded client entity.
-     *
      */
     @Transactional
     public User loadClient(int id)
@@ -80,9 +78,8 @@ public class UserService
      * Method implements finding of clients by their login and password in
      * the database.
      *
-     * @param login    client login for search that client in the database.
+     * @param login client login for search that client in the database.
      * @return found client entity.
-     *
      */
     @Transactional
     public User findClient(String login)
@@ -109,7 +106,6 @@ public class UserService
      *
      * @param number telephone number of client for search that client in the database.
      * @return found client entity.
-     *
      */
     @Transactional
     public User findClientByNumber(int number)
@@ -135,7 +131,6 @@ public class UserService
      * Method implements deleting of clients from the database.
      *
      * @param id client id for deleting that client from the database.
-     *
      */
     @Transactional
     public void deleteClient(int id)
@@ -158,7 +153,6 @@ public class UserService
      * Method implements receiving of all clients from the database.
      *
      * @return list of received clients.
-     *
      */
     @Transactional
     public Set<User> getAllClients()

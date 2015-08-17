@@ -3,8 +3,6 @@ package com.tsystems.javaschool.ecare.entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by Kolia on 27.06.2015.
@@ -22,7 +20,6 @@ public class Role implements Serializable
     @Column(name = "role_name")
     @NotNull
     private String roleName;
-
 
 
     public Role()
@@ -54,7 +51,6 @@ public class Role implements Serializable
     {
         this.roleName = name;
     }
-
 
 
     @Override

@@ -26,7 +26,7 @@ public class AdminLobbyController
 {
     @Autowired
     UserService userService;
-    
+
     @Autowired
     ContractService contractService;
 
@@ -35,7 +35,6 @@ public class AdminLobbyController
 
     @Autowired
     OptionService optionService;
-
 
 
     @RequestMapping(value = "/lock_user", method = RequestMethod.GET)
@@ -69,7 +68,6 @@ public class AdminLobbyController
     }
 
 
-
     @RequestMapping(value = "/add_user", method = RequestMethod.GET)
     protected String addUser(HttpServletRequest request)
     {
@@ -99,7 +97,7 @@ public class AdminLobbyController
         else role = "ROLE_USER";
 
         User newUser = new User(firstName, lastName, date, passportData, address,
-                email, password, new Role(role));
+                email, password, role);
 
         try
         {
@@ -121,7 +119,6 @@ public class AdminLobbyController
 
         return "admin_lobby";
     }
-
 
 
     @RequestMapping(value = "/add_contract", method = RequestMethod.GET)
@@ -176,7 +173,6 @@ public class AdminLobbyController
     }
 
 
-
     @RequestMapping(value = "/find_user", method = RequestMethod.GET)
     protected String findUser(HttpServletRequest request)
     {
@@ -195,7 +191,6 @@ public class AdminLobbyController
 
         return "admin_lobby";
     }
-
 
 
     @RequestMapping(value = "/select_tariff", method = RequestMethod.GET)
@@ -242,7 +237,7 @@ public class AdminLobbyController
 
         for (Option option : availableOptions)
         {
-            for (Option neededOption: option.getNeededOptions())
+            for (Option neededOption : option.getNeededOptions())
             {
                 if (!selectedOptions.contains(neededOption))
                     disabledOptions.add(option);
@@ -307,8 +302,7 @@ public class AdminLobbyController
         if (selectedOptions.contains(changedOption))
         {
             selectedOptions.remove(changedOption);
-        }
-        else
+        } else
         {
             selectedOptions.add(changedOption);
         }
@@ -327,7 +321,7 @@ public class AdminLobbyController
 
         for (Option option : availableOptions)
         {
-            for (Option neededOption: option.getNeededOptions())
+            for (Option neededOption : option.getNeededOptions())
             {
                 if (!selectedOptions.contains(neededOption))
                     disabledOptions.add(option);
@@ -455,25 +449,28 @@ public class AdminLobbyController
 
         }
 
-        try
+        /*Set<Contract> contracts = (Set<Contract>) session.getAttribute("contracts");
+        boolean isTariffUsed = false;*/
+        for (Tariff tariff : tariffs)
         {
-            for (Tariff tariff : tariffs)
+            if (tariff.getName().equals(tariffName))
             {
-                if (tariff.getName().equals(tariffName))
+                tariff.setAvailableOptions(tariffOptions);
+                tariffService.saveOrUpdateTariff(tariff);
+
+                /*for (Contract contract : contracts)
                 {
-                    tariff.setAvailableOptions(tariffOptions);
-                    tariffService.saveOrUpdateTariff(tariff);
-                }
+                    if (contract.getTariff() == tariff)
+                    {
+                        isTariffUsed = true;
+                    }
+                }*/
+
             }
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
-
+        //session.setAttribute("isTariffUsed", isTariffUsed);
         return "admin_lobby";
     }
-
 
 
     @RequestMapping(value = "/delete_tariff", method = RequestMethod.GET)
@@ -507,7 +504,6 @@ public class AdminLobbyController
     }
 
 
-
     @RequestMapping(value = "/edit_locked_options", method = RequestMethod.GET)
     protected String editLockedOptions(HttpServletRequest request)
     {
@@ -529,7 +525,6 @@ public class AdminLobbyController
 
         return "admin_lobby";
     }
-
 
 
     @RequestMapping(value = "/save_edit_locked_options", method = RequestMethod.GET)
@@ -589,7 +584,6 @@ public class AdminLobbyController
 
         return "admin_lobby";
     }
-
 
 
     @RequestMapping(value = "/save_edit_needed_options", method = RequestMethod.GET)

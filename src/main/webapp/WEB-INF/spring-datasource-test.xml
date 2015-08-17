@@ -18,7 +18,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml" />
-        <property name="persistenceUnitName" value="ECARE" />
+        <property name="persistenceUnitName" value="ecarePU-test" />
         <property name="dataSource" ref="dataSourceTest" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="jpaDialect" ref="jpaDialect" />
@@ -39,9 +39,11 @@
 
     <tx:annotation-driven transaction-manager="transactionManager" />
 
+
+
     <bean id="dataSourceTest" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/ecare_test" />
+        <property name="url" value="jdbc:mysql://localhost:3306/ecare" />
         <property name="username" value="root" />
         <property name="password" value="" />
     </bean>

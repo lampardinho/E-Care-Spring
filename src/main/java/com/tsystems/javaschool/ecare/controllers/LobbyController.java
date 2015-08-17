@@ -8,21 +8,15 @@ import com.tsystems.javaschool.ecare.services.ContractService;
 import com.tsystems.javaschool.ecare.services.OptionService;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
-import org.hibernate.metamodel.source.annotations.xml.mocker.MockHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -62,14 +56,15 @@ public class LobbyController
     protected String enterLobby(HttpServletRequest request, Authentication authentication)
     {
         HttpSession session = request.getSession();
-        
+
         String name = authentication.getName();
 
         User user = userService.findClient(name);
         session.setAttribute("user", user);
 
         String role = null;
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
+        for (GrantedAuthority authority : authentication.getAuthorities())
+        {
             role = authority.getAuthority();
         }
 
@@ -77,8 +72,7 @@ public class LobbyController
         {
             initAdmin(request);
             return "admin_lobby";
-        }
-        else
+        } else
         {
             initClient(request);
             return "client_lobby";
@@ -119,7 +113,6 @@ public class LobbyController
                 lockedUsers.add(user);
         }
         session.setAttribute("lockedUsers", lockedUsers);
-
 
 
     }
@@ -166,7 +159,7 @@ public class LobbyController
 
             for (Option option : currentTariff.getAvailableOptions())
             {
-                for (Option neededOption: option.getNeededOptions())
+                for (Option neededOption : option.getNeededOptions())
                 {
                     if (!selectedOptions.contains(neededOption))
                         disabledOptions.add(option);

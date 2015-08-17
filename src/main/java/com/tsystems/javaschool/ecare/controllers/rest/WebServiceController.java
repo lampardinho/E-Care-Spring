@@ -3,7 +3,6 @@ package com.tsystems.javaschool.ecare.controllers.rest;
 
 import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.rest.UserInfo;
 import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Kolia on 30.07.2015.
@@ -27,7 +28,8 @@ public class WebServiceController
     UserService userService;
 
     @RequestMapping("/tariffs")
-    public Set<String> getTariffs() {
+    public Set<String> getTariffs()
+    {
 
         Set<Tariff> tariffs = tariffService.getAllTariffs();
         Set<String> names = new HashSet<>();
@@ -39,7 +41,7 @@ public class WebServiceController
     }
 
     @RequestMapping("/users")
-    public Set<String> getUsers(@RequestParam(value="tariff") String tariff)
+    public Set<String> getUsers(@RequestParam(value = "tariff") String tariff)
     {
         Set<User> users = userService.getUsersByTariff(tariff);
         Set<String> infos = new HashSet<>();

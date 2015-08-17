@@ -22,14 +22,14 @@ public class ClientLoginTest
     public void setUp() throws Exception
     {
         driver = new FirefoxDriver();
-        baseUrl = "http://localhost:8085/";
+        baseUrl = "http://localhost:8085/fullstack";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     @Test
     public void testLogin() throws Exception
     {
-        driver.get(baseUrl + "/login.jsp");
+        driver.get(baseUrl + "/login");
         /*try
         {
             assertEquals("Please sign in", driver.findElement(By.cssSelector("h2.form-signin-heading")).getText());
@@ -37,10 +37,10 @@ public class ClientLoginTest
         {
             verificationErrors.append(e.toString());
         }*/
-        driver.findElement(By.name("email")).clear();
-        driver.findElement(By.name("email")).sendKeys("mashasyrkina@mail.ru");
-        driver.findElement(By.name("password")).clear();
-        driver.findElement(By.name("password")).sendKeys("qwerty");
+        driver.findElement(By.id("inputEmail")).clear();
+        driver.findElement(By.id("inputEmail")).sendKeys("mashasyrkina@mail.ru");
+        driver.findElement(By.id("inputPassword")).clear();
+        driver.findElement(By.id("inputPassword")).sendKeys("qwerty");
         driver.findElement(By.xpath("//button[@type='submit']")).click();
         /*try
         {

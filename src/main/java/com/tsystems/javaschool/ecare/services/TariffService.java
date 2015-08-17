@@ -2,7 +2,6 @@ package com.tsystems.javaschool.ecare.services;
 
 import com.tsystems.javaschool.ecare.dao.TariffDAO;
 import com.tsystems.javaschool.ecare.entities.Tariff;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +16,15 @@ import java.util.Set;
 @Service("tariffService")
 public class TariffService
 {
+    /*Logger for tariff service operations*/
+    private static Logger logger = Logger.getLogger(TariffService.class);
     /*SQL tariff implementations of abstract DAO class*/
     private TariffDAO trDao;
 
-    /*Logger for tariff service operations*/
-    private static Logger logger = Logger.getLogger(TariffService.class);
-
     /*Constructor of Tariff Service class*/
     @Autowired
-    public TariffService(TariffDAO trDAO) {
+    public TariffService(TariffDAO trDAO)
+    {
         this.trDao = trDAO;
     }
 
@@ -35,7 +34,6 @@ public class TariffService
      *
      * @param tr tariff entity to be saved or updated.
      * @return saved or updated tariff entity.
-     *
      */
     @Transactional
     public Tariff saveOrUpdateTariff(Tariff tr)
@@ -58,7 +56,6 @@ public class TariffService
      *
      * @param id tariff id for search that tariff in the database.
      * @return loaded tariff entity.
-     *
      */
     @Transactional
     public Tariff loadTariff(int id)
@@ -80,7 +77,6 @@ public class TariffService
      * This method implements deleting of tariff from the database.
      *
      * @param id tariff id for deleting that tariff from the database.
-     *
      */
     @Transactional
     public void deleteTariff(int id)

@@ -1,7 +1,6 @@
 package com.tsystems.javaschool.ecare.entities;
 
 
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -43,7 +42,7 @@ public class Contract implements Serializable
 
     @Column(name = "phone_number")
     @NotNull
-    @Size(min=2, max=10)
+    //@Size(min = 2, max = 10)
     private int phoneNumber;
 
     @Column(name = "ballance")
@@ -54,14 +53,14 @@ public class Contract implements Serializable
     @JoinTable(name = "contract_locking",
             joinColumns = @JoinColumn(name = "contract_id"),
             inverseJoinColumns = @JoinColumn(name = "locker_id"))
-    @NotNull
+    //@NotNull
     private Set<User> lockedByUsers;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "selected_options",
             joinColumns = @JoinColumn(name = "contract_id"),
             inverseJoinColumns = @JoinColumn(name = "option_id"))
-    @NotNull
+    //@NotNull
     private Set<Option> selectedOptions;
 
     public Contract()

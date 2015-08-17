@@ -7,17 +7,20 @@
            http://www.springframework.org/schema/security/spring-security.xsd">
     <http auto-config="true">
         <!--<intercept-url pattern="/lobby*" access="ROLE_USER" />-->
-        <!--<intercept-url pattern="/client_lobby*" access="ROLE_USER" />-->
-        <!--<intercept-url pattern="/admin_lobby*" access="ROLE_ADMIN" />-->
+        <headers>
+            <cache-control/>
+        </headers>
+        <intercept-url pattern="/client_lobby*" access="ROLE_USER" />
+        <intercept-url pattern="/admin_lobby*" access="ROLE_ADMIN" />
         <form-login login-page="/login"  default-target-url="/lobby" authentication-failure-url="/login"/>
-        <logout/>
+        <logout logout-success-url="/login" invalidate-session="true" delete-cookies="JSESSIONID"/>
     </http>
     <!--<beans:bean id="expressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />-->
     <authentication-manager>
         <authentication-provider>
             <jdbc-user-service data-source-ref="dataSource"
                                users-by-username-query="select email,password,true from users where email=?"
-                               authorities-by-username-query="select u.email,au.role_name from users u,roles au where u.role_id=au.role_id and u.email=?"/>
+                               authorities-by-username-query="select u.email,u.role from users u where u.email=?"/>
         </authentication-provider>
     </authentication-manager>
 </beans:beans>
